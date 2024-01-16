@@ -1,0 +1,8 @@
+### Variables
+@apiurl = http://localhost:3001
+
+### Create User
+{{apiurl}}/user
+Content-Type: application/json
+
+{}
