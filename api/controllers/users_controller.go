@@ -1,24 +1,24 @@
 package controllers
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+
+	db "github.com/dariomatias-dev/go_auth/api/db/sqlc"
 )
 
-type usersController struct{}
-
-func NewUsersController() *usersController {
-	return &usersController{}
+type usersController struct {
+	DbQueries *db.Queries
 }
 
-func (uc usersController) Create(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, "Hello World!")
+func NewUsersController(dbQueries *db.Queries) *usersController {
+	return &usersController{
+		DbQueries: dbQueries,
+	}
 }
 
-func (uc usersController) FindOne(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, ctx.Param("id"))
-}
+func (uc usersController) Create(ctx *gin.Context) {}
+
+func (uc usersController) FindOne(ctx *gin.Context) {}
 
 func (uc usersController) FindAll(ctx *gin.Context) {}
 

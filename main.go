@@ -45,7 +45,10 @@ func init() {
 func main() {
 	app := gin.Default()
 
-	routes.AppRoutes(app)
+	routes.AppRoutes(
+		app,
+		dbQueries,
+	)
 
 	app.Run("localhost:3001")
 }
