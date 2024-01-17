@@ -5,25 +5,25 @@
 package db
 
 import (
-	"database/sql"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 type Tokens struct {
-	UserID       uuid.UUID    `json:"user_id"`
-	AccessToken  string       `json:"access_token"`
-	RefreshToken string       `json:"refresh_token"`
-	UpdatedAt    sql.NullTime `json:"updated_at"`
+	UserID       uuid.UUID `json:"user_id"`
+	AccessToken  string    `json:"access_token"`
+	RefreshToken string    `json:"refresh_token"`
+	UpdatedAt    time.Time `json:"updated_at"`
 }
 
 type Users struct {
-	ID        uuid.UUID    `json:"id"`
-	Name      string       `json:"name"`
-	Age       int32        `json:"age"`
-	Email     string       `json:"email"`
-	Password  string       `json:"password"`
-	Roles     []string     `json:"roles"`
-	CreatedAt sql.NullTime `json:"created_at"`
-	UpdatedAt sql.NullTime `json:"updated_at"`
+	ID        uuid.UUID `json:"id"`
+	Name      string    `json:"name"`
+	Age       int32     `json:"age"`
+	Email     string    `json:"email"`
+	Password  string    `json:"password"`
+	Roles     []string  `json:"roles"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }

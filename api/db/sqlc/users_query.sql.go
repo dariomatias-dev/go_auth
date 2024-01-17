@@ -8,6 +8,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
@@ -36,13 +37,13 @@ type CreateUserParams struct {
 }
 
 type CreateUserRow struct {
-	ID        uuid.UUID    `json:"id"`
-	Name      string       `json:"name"`
-	Age       int32        `json:"age"`
-	Password  string       `json:"password"`
-	Roles     []string     `json:"roles"`
-	CreatedAt sql.NullTime `json:"created_at"`
-	UpdatedAt sql.NullTime `json:"updated_at"`
+	ID        uuid.UUID `json:"id"`
+	Name      string    `json:"name"`
+	Age       int32     `json:"age"`
+	Password  string    `json:"password"`
+	Roles     []string  `json:"roles"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
@@ -79,13 +80,13 @@ WHERE
 `
 
 type DeleteUserRow struct {
-	ID        uuid.UUID    `json:"id"`
-	Name      string       `json:"name"`
-	Age       int32        `json:"age"`
-	Email     string       `json:"email"`
-	Roles     []string     `json:"roles"`
-	CreatedAt sql.NullTime `json:"created_at"`
-	UpdatedAt sql.NullTime `json:"updated_at"`
+	ID        uuid.UUID `json:"id"`
+	Name      string    `json:"name"`
+	Age       int32     `json:"age"`
+	Email     string    `json:"email"`
+	Roles     []string  `json:"roles"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func (q *Queries) DeleteUser(ctx context.Context) (DeleteUserRow, error) {
@@ -156,13 +157,13 @@ FROM "users"
 `
 
 type GetUsersRow struct {
-	ID        uuid.UUID    `json:"id"`
-	Name      string       `json:"name"`
-	Age       int32        `json:"age"`
-	Email     string       `json:"email"`
-	Roles     []string     `json:"roles"`
-	CreatedAt sql.NullTime `json:"created_at"`
-	UpdatedAt sql.NullTime `json:"updated_at"`
+	ID        uuid.UUID `json:"id"`
+	Name      string    `json:"name"`
+	Age       int32     `json:"age"`
+	Email     string    `json:"email"`
+	Roles     []string  `json:"roles"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func (q *Queries) GetUsers(ctx context.Context) ([]GetUsersRow, error) {
@@ -227,13 +228,13 @@ type UpdateUserParams struct {
 }
 
 type UpdateUserRow struct {
-	ID        uuid.UUID    `json:"id"`
-	Name      string       `json:"name"`
-	Age       int32        `json:"age"`
-	Email     string       `json:"email"`
-	Roles     []string     `json:"roles"`
-	CreatedAt sql.NullTime `json:"created_at"`
-	UpdatedAt sql.NullTime `json:"updated_at"`
+	ID        uuid.UUID `json:"id"`
+	Name      string    `json:"name"`
+	Age       int32     `json:"age"`
+	Email     string    `json:"email"`
+	Roles     []string  `json:"roles"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (UpdateUserRow, error) {

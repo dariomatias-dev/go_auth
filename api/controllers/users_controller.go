@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 
 	db "github.com/dariomatias-dev/go_auth/api/db/sqlc"
 	usertype "github.com/dariomatias-dev/go_auth/api/enums/user_type"
@@ -30,12 +31,24 @@ func (uc usersController) Create(ctx *gin.Context) {
 		)
 	}
 
+	encryptedPassword, err := bcrypt.GenerateFromPassword(
+		[]byte(createUser.Password),
+		10,
+	)
+	if err != nil {
+		ctx.AbortWithStatusJSON(
+			http.StatusInternalServerError,
+			err.Error(),
+		)
+		return
+	}
+
 	// Create User
 	userArg := db.CreateUserParams{
 		Name:     createUser.Name,
 		Age:      createUser.Age,
 		Email:    createUser.Email,
-		Password: createUser.Password,
+		Password: string(encryptedPassword),
 		Roles: []string{
 			usertype.User,
 		},
