@@ -28,6 +28,7 @@ func HandleError() gin.HandlerFunc {
 					http.StatusInternalServerError,
 					gin.H{
 						"message": "Internal server error",
+						"error": err,
 					},
 				)
 				return

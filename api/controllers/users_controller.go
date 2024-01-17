@@ -1,9 +1,13 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 
 	db "github.com/dariomatias-dev/go_auth/api/db/sqlc"
+	usertype "github.com/dariomatias-dev/go_auth/api/enums/user_type"
+	"github.com/dariomatias-dev/go_auth/api/models"
 )
 
 type usersController struct {
@@ -16,7 +20,52 @@ func NewUsersController(dbQueries *db.Queries) *usersController {
 	}
 }
 
-func (uc usersController) Create(ctx *gin.Context) {}
+func (uc usersController) Create(ctx *gin.Context) {
+	createUser := models.CreateUserModel{}
+
+	if err := ctx.ShouldBindJSON(&createUser); err != nil {
+		ctx.AbortWithStatusJSON(
+			http.StatusBadRequest,
+			err.Error(),
+		)
+	}
+
+	// Create User
+	userArg := db.CreateUserParams{
+		Name:     createUser.Name,
+		Age:      createUser.Age,
+		Email:    createUser.Email,
+		Password: createUser.Password,
+		Roles: []string{
+			usertype.User,
+		},
+	}
+
+	createdUser, err := uc.DbQueries.CreateUser(ctx, userArg)
+
+	if err != nil {
+		panic(err)
+	}
+
+	// Create Tokens
+	tokensArg := db.CreateTokensParams{
+		UserID:       createdUser.ID,
+		AccessToken:  "",
+		RefreshToken: "",
+	}
+
+	_, err = uc.DbQueries.CreateTokens(ctx, tokensArg)
+
+	if err != nil {
+		panic(err)
+	}
+
+	ctx.JSON(
+		http.StatusOK,
+		createdUser,
+	)
+
+}
 
 func (uc usersController) FindOne(ctx *gin.Context) {}
 
