@@ -16,7 +16,9 @@ func (uc usersController) Create(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, "Hello World!")
 }
 
-func (uc usersController) FindOne(ctx *gin.Context) {}
+func (uc usersController) FindOne(ctx *gin.Context) {
+	ctx.JSON(http.StatusOK, ctx.Param("id"))
+}
 
 func (uc usersController) FindAll(ctx *gin.Context) {}
 

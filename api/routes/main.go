@@ -4,11 +4,14 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/dariomatias-dev/go_auth/api/controllers"
+	"github.com/dariomatias-dev/go_auth/api/middlewares"
 )
 
 func AppRoutes(router *gin.Engine) *gin.RouterGroup {
 	authController := controllers.NewAuthController()
 	usersController := controllers.NewUsersController()
+
+	validUUIDMiddleware := middlewares.ValidUUIDMiddleware
 
 	app := router.Group("")
 	{
@@ -26,19 +29,22 @@ func AppRoutes(router *gin.Engine) *gin.RouterGroup {
 			)
 			users.GET(
 				"/user/:id",
-				usersController.Create,
+				validUUIDMiddleware,
+				usersController.FindOne,
 			)
 			users.GET(
 				"/user",
-				usersController.Create,
+				usersController.FindAll,
 			)
 			users.PATCH(
 				"/user/:id",
-				usersController.Create,
+				validUUIDMiddleware,
+				usersController.Update,
 			)
 			users.DELETE(
 				"/user/:id",
-				usersController.Create,
+				validUUIDMiddleware,
+				usersController.Delete,
 			)
 		}
 	}

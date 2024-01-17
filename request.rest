@@ -2,7 +2,13 @@
 @apiurl = http://localhost:3001
 
 ### Create User
-{{apiurl}}/user
+POST {{apiurl}}/user
+Content-Type: application/json
+
+{}
+
+### Get User
+GET {{apiurl}}/user/61ef123d-88a8-4f6d-9e7f-00388a0f25d9
 Content-Type: application/json
 
 {}
