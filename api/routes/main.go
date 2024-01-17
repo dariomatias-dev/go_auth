@@ -41,7 +41,7 @@ func AppRoutes(
 				usersController.FindOne,
 			)
 			users.GET(
-				"/user",
+				"/users",
 				usersController.FindAll,
 			)
 			users.PATCH(

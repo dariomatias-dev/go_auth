@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 
 	db "github.com/dariomatias-dev/go_auth/api/db/sqlc"
@@ -77,13 +78,55 @@ func (uc usersController) Create(ctx *gin.Context) {
 		http.StatusOK,
 		createdUser,
 	)
-
 }
 
-func (uc usersController) FindOne(ctx *gin.Context) {}
+func (uc usersController) FindOne(ctx *gin.Context) {
+	userID := ctx.Param("id")
 
-func (uc usersController) FindAll(ctx *gin.Context) {}
+	ID, _ := uuid.Parse(userID)
+
+	user, err := uc.DbQueries.GetUser(ctx, ID)
+	if err != nil {
+		panic(err)
+	}
+
+	ctx.JSON(
+		http.StatusOK,
+		user,
+	)
+}
+
+func (uc usersController) FindAll(ctx *gin.Context) {
+	users, err := uc.DbQueries.GetUsers(ctx)
+	if err != nil {
+		panic(err)
+	}
+
+	ctx.JSON(
+		http.StatusOK,
+		users,
+	)
+}
 
 func (uc usersController) Update(ctx *gin.Context) {}
 
-func (uc usersController) Delete(ctx *gin.Context) {}
+func (uc usersController) Delete(ctx *gin.Context) {
+	userID := ctx.Param("id")
+
+	ID, _ := uuid.Parse(userID)
+
+	_, err := uc.DbQueries.DeleteTokens(ctx, ID)
+	if err != nil {
+		panic(err)
+	}
+
+	deletedUser, err := uc.DbQueries.DeleteUser(ctx, ID)
+	if err != nil {
+		panic(err)
+	}
+
+	ctx.JSON(
+		http.StatusOK,
+		deletedUser,
+	)
+}

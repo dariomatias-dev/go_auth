@@ -6,7 +6,6 @@ INSERT INTO
 VALUES ($1, $2, $3, $4, $5) RETURNING id,
     name,
     age,
-    password,
     roles,
     created_at,
     updated_at;
@@ -51,7 +50,7 @@ WHERE
 -- name: DeleteUser :one
 DELETE FROM "users"
 WHERE
-    id = 1 RETURNING id,
+    id = $1 RETURNING id,
     name,
     age,
     email,

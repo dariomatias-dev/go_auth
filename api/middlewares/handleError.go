@@ -16,6 +16,7 @@ func HandleError() gin.HandlerFunc {
 			if err := recover(); err != nil {
 				if pqErr, ok := err.(*pq.Error); ok {
 					handleDatabaseError(ctx, pqErr)
+					return
 				} else if err == sql.ErrNoRows {
 					ctx.AbortWithStatusJSON(
 						http.StatusNotFound,
@@ -44,7 +45,7 @@ func handleDatabaseError(ctx *gin.Context, pqErr *pq.Error) {
 	case "23505":
 		fieldName := extractFieldName(pqErr.Message)
 		errorMessage := fmt.Sprintf(
-			"Vallue of the %s already exists",
+			"Value of the %s already exists",
 			fieldName,
 		)
 

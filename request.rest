@@ -13,7 +13,19 @@ Content-Type: application/json
 }
 
 ### Get User
-GET {{apiurl}}/user/61ef123d-88a8-4f6d-9e7f-00388a0f25d9
+GET {{apiurl}}/user/9f03db06-ea0b-4d92-b4f0-8b21ebf3d7f4
+Content-Type: application/json
+
+{}
+
+### Get Users
+GET {{apiurl}}/users
+Content-Type: application/json
+
+{}
+
+### Delete User
+DELETE {{apiurl}}/user/9f03db06-ea0b-4d92-b4f0-8b21ebf3d7f4
 Content-Type: application/json
 
 {}

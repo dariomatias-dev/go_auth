@@ -22,7 +22,6 @@ INSERT INTO
 VALUES ($1, $2, $3, $4, $5) RETURNING id,
     name,
     age,
-    password,
     roles,
     created_at,
     updated_at
@@ -40,7 +39,6 @@ type CreateUserRow struct {
 	ID        uuid.UUID `json:"id"`
 	Name      string    `json:"name"`
 	Age       int32     `json:"age"`
-	Password  string    `json:"password"`
 	Roles     []string  `json:"roles"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
@@ -59,7 +57,6 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 		&i.ID,
 		&i.Name,
 		&i.Age,
-		&i.Password,
 		pq.Array(&i.Roles),
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -70,7 +67,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 const deleteUser = `-- name: DeleteUser :one
 DELETE FROM "users"
 WHERE
-    id = 1 RETURNING id,
+    id = $1 RETURNING id,
     name,
     age,
     email,
@@ -89,8 +86,8 @@ type DeleteUserRow struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func (q *Queries) DeleteUser(ctx context.Context) (DeleteUserRow, error) {
-	row := q.db.QueryRowContext(ctx, deleteUser)
+func (q *Queries) DeleteUser(ctx context.Context, id uuid.UUID) (DeleteUserRow, error) {
+	row := q.db.QueryRowContext(ctx, deleteUser, id)
 	var i DeleteUserRow
 	err := row.Scan(
 		&i.ID,
