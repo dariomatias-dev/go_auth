@@ -11,6 +11,8 @@ func AppRoutes(router *gin.Engine) *gin.RouterGroup {
 	authController := controllers.NewAuthController()
 	usersController := controllers.NewUsersController()
 
+	router.Use(middlewares.HandleError())
+
 	validUUIDMiddleware := middlewares.ValidUUIDMiddleware
 
 	app := router.Group("")
