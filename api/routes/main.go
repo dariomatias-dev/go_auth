@@ -6,6 +6,7 @@ import (
 	"github.com/dariomatias-dev/go_auth/api/controllers"
 	db "github.com/dariomatias-dev/go_auth/api/db/sqlc"
 	"github.com/dariomatias-dev/go_auth/api/middlewares"
+	"github.com/dariomatias-dev/go_auth/api/services"
 )
 
 func AppRoutes(
@@ -14,7 +15,9 @@ func AppRoutes(
 ) *gin.RouterGroup {
 	authController := controllers.NewAuthController()
 	usersController := controllers.NewUsersController(
-		dbQueries,
+		services.UsersService{
+			DbQueries: dbQueries,
+		},
 	)
 
 	router.Use(middlewares.HandleError())
