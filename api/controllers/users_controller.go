@@ -29,7 +29,10 @@ func (uc usersController) Create(ctx *gin.Context) {
 	if err := ctx.ShouldBindJSON(&createUser); err != nil {
 		ctx.AbortWithStatusJSON(
 			http.StatusBadRequest,
-			err.Error(),
+			gin.H{
+				"message": "Invalid body",
+				"error": err.Error(),
+			},
 		)
 	}
 
@@ -46,7 +49,7 @@ func (uc usersController) Create(ctx *gin.Context) {
 	}
 
 	// Create User
-	userArg := db.CreateUserParams{
+	createUserParams := db.CreateUserParams{
 		Name:     createUser.Name,
 		Age:      createUser.Age,
 		Email:    createUser.Email,
@@ -56,20 +59,20 @@ func (uc usersController) Create(ctx *gin.Context) {
 		},
 	}
 
-	createdUser, err := uc.DbQueries.CreateUser(ctx, userArg)
+	createdUser, err := uc.DbQueries.CreateUser(ctx, createUserParams)
 
 	if err != nil {
 		panic(err)
 	}
 
 	// Create Tokens
-	tokensArg := db.CreateTokensParams{
+	createTokensParams := db.CreateTokensParams{
 		UserID:       createdUser.ID,
 		AccessToken:  "",
 		RefreshToken: "",
 	}
 
-	_, err = uc.DbQueries.CreateTokens(ctx, tokensArg)
+	_, err = uc.DbQueries.CreateTokens(ctx, createTokensParams)
 
 	if err != nil {
 		panic(err)
@@ -128,11 +131,33 @@ func (uc usersController) Update(ctx *gin.Context) {
 
 	getValue := utils.GetValue{}
 
+	password := updateUser.Password
+
+	if password != nil {
+		value, err := bcrypt.GenerateFromPassword(
+			[]byte(*password),
+			10,
+		)
+		if err != nil {
+			ctx.AbortWithStatusJSON(
+				http.StatusInternalServerError,
+				err.Error(),
+			)
+			return
+		}
+
+		encryptedPassword := string(value)
+		password = &encryptedPassword
+	}
+
+
+
 	updateUserParams := db.UpdateUserParams{
 		ID: ID,
 		Name: getValue.String(updateUser.Name),
 		Age: getValue.Int32(updateUser.Age),
 		Email: getValue.String(updateUser.Email),
+		Password: getValue.String(password),
 	}
 
 	updatedUser, err := uc.DbQueries.UpdateUser(ctx, updateUserParams)

@@ -29,7 +29,7 @@ PATCH {{apiurl}}/user/52dcbdac-e0f5-41d6-999c-d0cf8a0d80cb
 Content-Type: application/json
 
 {
-    "age": 50
+    "password": "thytgdbyfr56"
 }
 
 ### Delete User
