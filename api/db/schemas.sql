@@ -1,0 +1,22 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE IF NOT EXISTS "users" (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    name VARCHAR(128) UNIQUE NOT NULL,
+    age INT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    roles TEXT[] NOT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "tokens" (
+    user_id UUID PRIMARY KEY,
+    access_token TEXT NOT NULL,
+    refresh_token TEXT NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY(user_id) REFERENCES users(id)
+)
