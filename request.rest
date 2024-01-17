@@ -13,7 +13,7 @@ Content-Type: application/json
 }
 
 ### Get User
-GET {{apiurl}}/user/9f03db06-ea0b-4d92-b4f0-8b21ebf3d7f4
+GET {{apiurl}}/user/52dcbdac-e0f5-41d6-999c-d0cf8a0d80cb
 Content-Type: application/json
 
 {}
@@ -23,6 +23,14 @@ GET {{apiurl}}/users
 Content-Type: application/json
 
 {}
+
+### Update User
+PATCH {{apiurl}}/user/52dcbdac-e0f5-41d6-999c-d0cf8a0d80cb
+Content-Type: application/json
+
+{
+    "age": 50
+}
 
 ### Delete User
 DELETE {{apiurl}}/user/9f03db06-ea0b-4d92-b4f0-8b21ebf3d7f4

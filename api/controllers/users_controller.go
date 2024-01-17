@@ -10,6 +10,7 @@ import (
 	db "github.com/dariomatias-dev/go_auth/api/db/sqlc"
 	usertype "github.com/dariomatias-dev/go_auth/api/enums/user_type"
 	"github.com/dariomatias-dev/go_auth/api/models"
+	"github.com/dariomatias-dev/go_auth/api/utils"
 )
 
 type usersController struct {
@@ -108,7 +109,42 @@ func (uc usersController) FindAll(ctx *gin.Context) {
 	)
 }
 
-func (uc usersController) Update(ctx *gin.Context) {}
+func (uc usersController) Update(ctx *gin.Context) {
+	userID := ctx.Param("id")
+	updateUser := models.UpdateModel{}
+
+	ID, _ := uuid.Parse(userID)
+
+	if err := ctx.ShouldBindJSON(&updateUser); err != nil {
+		ctx.AbortWithStatusJSON(
+			http.StatusBadRequest,
+			gin.H{
+				"message": "Invalid body",
+				"error":   err.Error(),
+			},
+		)
+		return
+	}
+
+	getValue := utils.GetValue{}
+
+	updateUserParams := db.UpdateUserParams{
+		ID: ID,
+		Name: getValue.String(updateUser.Name),
+		Age: getValue.Int32(updateUser.Age),
+		Email: getValue.String(updateUser.Email),
+	}
+
+	updatedUser, err := uc.DbQueries.UpdateUser(ctx, updateUserParams)
+	if err != nil {
+		panic(err)
+	}
+
+	ctx.JSON(
+		http.StatusOK,
+		updatedUser,
+	)
+}
 
 func (uc usersController) Delete(ctx *gin.Context) {
 	userID := ctx.Param("id")
