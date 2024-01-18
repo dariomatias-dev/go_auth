@@ -13,7 +13,11 @@ func AppRoutes(
 	router *gin.Engine,
 	dbQueries *db.Queries,
 ) *gin.RouterGroup {
-	authController := controllers.NewAuthController()
+	authController := controllers.NewAuthController(
+		services.AuthService{
+			DbQueries: dbQueries,
+		},
+	)
 	usersController := controllers.NewUsersController(
 		services.UsersService{
 			DbQueries: dbQueries,
@@ -30,6 +34,7 @@ func AppRoutes(
 		{
 			auth.POST("/login", authController.Login)
 			auth.GET("/refresh", authController.Refresh)
+			auth.POST("/validate-email", authController.ValidateEmail)
 		}
 
 		users := app.Group("")
