@@ -1,7 +1,10 @@
 package controllers
 
 import (
+	"fmt"
+	"math/rand"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -35,11 +38,30 @@ func (uc usersController) Create(ctx *gin.Context) {
 		)
 	}
 
-	uc.UsersServices.Create(ctx, createUser)
+	userID := uc.UsersServices.Create(ctx, createUser)
+
+	verificationCode := ""
+	for loop := 0; loop < 6; loop++ {
+		verificationCode += fmt.Sprint(rand.Intn(10))
+	}
 
 	verificationEmailResponse := uc.UsersServices.SendVerificationEmail(
+		verificationCode,
 		createUser.Name,
 		createUser.Email,
+	)
+
+	emailValidation := models.EmailValidationModel{
+		UserID:           *userID,
+		VerificationCode: verificationCode,
+		ExpirationTime: time.Now().Add(
+			time.Minute * 15,
+		).Unix(),
+	}
+
+	uc.UsersServices.CreateEmailValidation(
+		ctx,
+		emailValidation,
 	)
 
 	ctx.JSON(

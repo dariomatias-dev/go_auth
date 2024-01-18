@@ -2,7 +2,6 @@ package services
 
 import (
 	"fmt"
-	"math/rand"
 	"net/http"
 	"net/mail"
 	"net/smtp"
@@ -30,7 +29,7 @@ type UsersService struct {
 func (us UsersService) Create(
 	ctx *gin.Context,
 	createUser models.CreateUserModel,
-) {
+) *uuid.UUID {
 	encryptedPassword, err := bcrypt.GenerateFromPassword(
 		[]byte(createUser.Password),
 		10,
@@ -40,7 +39,7 @@ func (us UsersService) Create(
 			http.StatusInternalServerError,
 			err.Error(),
 		)
-		return
+		return nil
 	}
 
 	// Create User
@@ -72,6 +71,8 @@ func (us UsersService) Create(
 	if err != nil {
 		panic(err)
 	}
+
+	return &userID
 }
 
 func (us UsersService) FindOne(
@@ -153,14 +154,10 @@ func (us UsersService) Delete(
 }
 
 func (us UsersService) SendVerificationEmail(
+	verificationCode string,
 	userName string,
 	userEmail string,
 ) verificationEmailResponse {
-	verificationCode := ""
-	for loop := 0; loop < 6; loop++ {
-		verificationCode += fmt.Sprint(rand.Intn(10))
-	}
-
 	from := mail.Address{
 		Name:    "Go Auth",
 		Address: os.Getenv("GO_AUTH_EMAIL"),
@@ -271,5 +268,21 @@ func (us UsersService) SendVerificationEmail(
 	return verificationEmailResponse{
 		Message: "E-mail successfully sent",
 		Error:   nil,
+	}
+}
+
+func (us UsersService) CreateEmailValidation(
+	ctx *gin.Context,
+	emailValidation models.EmailValidationModel,
+) {
+	createEmailValidationParams := db.CreateEmailValidationParams{
+		UserID: emailValidation.UserID,
+		VerificationCode: emailValidation.VerificationCode,
+		ExpirationTime: int32(emailValidation.ExpirationTime),
+	}
+
+	err := us.DbQueries.CreateEmailValidation(ctx, createEmailValidationParams)
+	if err != nil {
+		panic(err)
 	}
 }
