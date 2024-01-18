@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS "users" (
     name VARCHAR(128) UNIQUE NOT NULL,
     age INT NOT NULL,
     email TEXT UNIQUE NOT NULL,
+    valid_email BOOLEAN DEFAULT FALSE,
     password TEXT NOT NULL,
     roles TEXT[] NOT NULL,
 

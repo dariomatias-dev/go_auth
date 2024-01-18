@@ -1,7 +1,12 @@
 package services
 
 import (
+	"fmt"
+	"math/rand"
 	"net/http"
+	"net/mail"
+	"net/smtp"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -142,4 +147,120 @@ func (us UsersService) Delete(
 	}
 
 	return &deletedUser
+}
+
+func (us UsersService) SendVerificationEmail(
+	userName string,
+	userEmail string,
+) string {
+	verificationCode := ""
+	for loop := 0; loop < 6; loop++ {
+		verificationCode += fmt.Sprint(rand.Intn(10))
+	}
+
+	from := mail.Address{
+		Name:    "Go Auth",
+		Address: os.Getenv("GO_AUTH_EMAIL"),
+	}
+	to := mail.Address{
+		Name:    userName,
+		Address: userEmail,
+	}
+	subject := "Activation Code"
+
+	emailBodyHeader := `
+		<head>
+			<style>
+				.no-reply {
+					font-weight: 600;
+					font-size: 14px;
+				}
+
+				.message {
+					color: #FFFFFF;
+					font-size: 16px;
+				}
+
+				.verification-code {
+					font-size: 26px;
+					font-weight: 800;
+					letter-spacing: 4px;
+				}
+
+				.copyright-message {
+					font-size: 14px;
+					color: #6F6F6F;
+				}
+			</style>
+		</head>
+	`
+	body := fmt.Sprintf(
+		`
+			<html>
+				%s
+				<body>
+					<main>
+						<h2 class="title">
+							Activate your account
+						</h2>
+						<p class="no-reply">
+							Do not respond to this email
+						</p>
+						<p class="message">
+							Hello %s.
+						</p>
+						<p class="message">
+							To start using our services, activate your account using the following code:
+						</p>
+						<h1 class="verification-code">
+							%s
+						</h1>
+						<p class="copyright-message">
+							Copyright © 2024. All rights reserved.
+						</p>
+					</main>
+				</body>
+			</html>
+		`,
+		emailBodyHeader,
+		userName,
+		verificationCode,
+	)
+
+	headers := map[string]string{
+		"From":         from.String(),
+		"To":           to.String(),
+		"Subject":      subject,
+		"MIME-version": "1.0",
+		"Content-Type": "text/html; charset=\"UTF-8\";",
+	}
+
+	message := ""
+	for key, value := range headers {
+		message += fmt.Sprintf("%s: %s\r\n", key, value)
+	}
+	message += "\r\n" + body
+
+	auth := smtp.PlainAuth(
+		"",
+		from.Address,
+		os.Getenv("GO_AUTH_EMAIL_APP_PASSWORD"),
+		"smtp.gmail.com",
+	)
+
+	err := smtp.SendMail(
+		"smtp.gmail.com:587",
+		auth,
+		from.Address,
+		[]string{
+			to.Address,
+		},
+		[]byte(message),
+	)
+
+	if err != nil {
+		return fmt.Sprint("Error sending email: ", err)
+	}
+
+	return "Email successfully sent"
 }
