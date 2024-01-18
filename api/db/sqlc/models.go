@@ -11,6 +11,13 @@ import (
 	"github.com/google/uuid"
 )
 
+type EmailValidations struct {
+	UserID           uuid.UUID `json:"user_id"`
+	VerificationCode string    `json:"verification_code"`
+	ExpirationTime   int32     `json:"expiration_time"`
+	CreatedAt        time.Time `json:"created_at"`
+}
+
 type Tokens struct {
 	UserID       uuid.UUID `json:"user_id"`
 	AccessToken  string    `json:"access_token"`
