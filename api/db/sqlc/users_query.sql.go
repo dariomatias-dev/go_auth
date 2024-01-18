@@ -19,12 +19,7 @@ INSERT INTO
     "users" (
         name, age, email, password, roles
     )
-VALUES ($1, $2, $3, $4, $5) RETURNING id,
-    name,
-    age,
-    roles,
-    created_at,
-    updated_at
+VALUES ($1, $2, $3, $4, $5) RETURNING id
 `
 
 type CreateUserParams struct {
@@ -35,16 +30,7 @@ type CreateUserParams struct {
 	Roles    []string `json:"roles"`
 }
 
-type CreateUserRow struct {
-	ID        uuid.UUID `json:"id"`
-	Name      string    `json:"name"`
-	Age       int32     `json:"age"`
-	Roles     []string  `json:"roles"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-}
-
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (uuid.UUID, error) {
 	row := q.db.QueryRowContext(ctx, createUser,
 		arg.Name,
 		arg.Age,
@@ -52,16 +38,9 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 		arg.Password,
 		pq.Array(arg.Roles),
 	)
-	var i CreateUserRow
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.Age,
-		pq.Array(&i.Roles),
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
 }
 
 const deleteUser = `-- name: DeleteUser :one
@@ -102,7 +81,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id uuid.UUID) (DeleteUserRow, 
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, name, age, email, password, roles, created_at, updated_at FROM "users" WHERE id = $1
+SELECT id, name, age, email, valid_email, password, roles, created_at, updated_at FROM "users" WHERE id = $1
 `
 
 func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (Users, error) {
@@ -113,6 +92,7 @@ func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (Users, error) {
 		&i.Name,
 		&i.Age,
 		&i.Email,
+		&i.ValidEmail,
 		&i.Password,
 		pq.Array(&i.Roles),
 		&i.CreatedAt,
@@ -122,7 +102,7 @@ func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (Users, error) {
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, name, age, email, password, roles, created_at, updated_at FROM "users" WHERE email = $1
+SELECT id, name, age, email, valid_email, password, roles, created_at, updated_at FROM "users" WHERE email = $1
 `
 
 func (q *Queries) GetUserByEmail(ctx context.Context, email string) (Users, error) {
@@ -133,6 +113,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (Users, erro
 		&i.Name,
 		&i.Age,
 		&i.Email,
+		&i.ValidEmail,
 		&i.Password,
 		pq.Array(&i.Roles),
 		&i.CreatedAt,

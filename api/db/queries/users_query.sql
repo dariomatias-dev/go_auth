@@ -3,12 +3,7 @@ INSERT INTO
     "users" (
         name, age, email, password, roles
     )
-VALUES ($1, $2, $3, $4, $5) RETURNING id,
-    name,
-    age,
-    roles,
-    created_at,
-    updated_at;
+VALUES ($1, $2, $3, $4, $5) RETURNING id;
 
 -- name: GetUser :one
 SELECT * FROM "users" WHERE id = $1;

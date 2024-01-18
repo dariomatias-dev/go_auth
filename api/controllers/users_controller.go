@@ -35,11 +35,16 @@ func (uc usersController) Create(ctx *gin.Context) {
 		)
 	}
 
-	createdUser := uc.UsersServices.Create(ctx, createUser)
+	uc.UsersServices.Create(ctx, createUser)
+
+	verificationEmailResponse := uc.UsersServices.SendVerificationEmail(
+		createUser.Name,
+		createUser.Email,
+	)
 
 	ctx.JSON(
 		http.StatusOK,
-		createdUser,
+		verificationEmailResponse,
 	)
 }
 

@@ -6,9 +6,9 @@ POST {{apiurl}}/user
 Content-Type: application/json
 
 {
-    "name": "Dário",
+    "name": "Dário Matias Sales",
     "age": 18,
-    "email": "matiasdario75@gmail.com",
+    "email": "adelta893@gmail.com",
     "password": "1234567890"
 }
 
@@ -33,7 +33,7 @@ Content-Type: application/json
 }
 
 ### Delete User
-DELETE {{apiurl}}/user/9f03db06-ea0b-4d92-b4f0-8b21ebf3d7f4
+DELETE {{apiurl}}/user/a9dd2c6a-8dd8-4f3b-9ca6-8c50ea86f4af
 Content-Type: application/json
 
 {}

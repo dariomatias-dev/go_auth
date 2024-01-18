@@ -5,6 +5,7 @@
 package db
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -18,12 +19,13 @@ type Tokens struct {
 }
 
 type Users struct {
-	ID        uuid.UUID `json:"id"`
-	Name      string    `json:"name"`
-	Age       int32     `json:"age"`
-	Email     string    `json:"email"`
-	Password  string    `json:"password"`
-	Roles     []string  `json:"roles"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID         uuid.UUID    `json:"id"`
+	Name       string       `json:"name"`
+	Age        int32        `json:"age"`
+	Email      string       `json:"email"`
+	ValidEmail sql.NullBool `json:"valid_email"`
+	Password   string       `json:"password"`
+	Roles      []string     `json:"roles"`
+	CreatedAt  time.Time    `json:"created_at"`
+	UpdatedAt  time.Time    `json:"updated_at"`
 }

@@ -18,6 +18,11 @@ import (
 	"github.com/dariomatias-dev/go_auth/api/utils"
 )
 
+type verificationEmailResponse struct {
+	Message string `json:"message"`
+	Error   error  `json:"error"`
+}
+
 type UsersService struct {
 	DbQueries *db.Queries
 }
@@ -25,7 +30,7 @@ type UsersService struct {
 func (us UsersService) Create(
 	ctx *gin.Context,
 	createUser models.CreateUserModel,
-) *db.CreateUserRow {
+) {
 	encryptedPassword, err := bcrypt.GenerateFromPassword(
 		[]byte(createUser.Password),
 		10,
@@ -35,7 +40,7 @@ func (us UsersService) Create(
 			http.StatusInternalServerError,
 			err.Error(),
 		)
-		return nil
+		return
 	}
 
 	// Create User
@@ -49,7 +54,7 @@ func (us UsersService) Create(
 		},
 	}
 
-	createdUser, err := us.DbQueries.CreateUser(ctx, createUserParams)
+	userID, err := us.DbQueries.CreateUser(ctx, createUserParams)
 
 	if err != nil {
 		panic(err)
@@ -57,7 +62,7 @@ func (us UsersService) Create(
 
 	// Create Tokens
 	createTokensParams := db.CreateTokensParams{
-		UserID:       createdUser.ID,
+		UserID:       userID,
 		AccessToken:  "",
 		RefreshToken: "",
 	}
@@ -67,8 +72,6 @@ func (us UsersService) Create(
 	if err != nil {
 		panic(err)
 	}
-
-	return &createdUser
 }
 
 func (us UsersService) FindOne(
@@ -152,7 +155,7 @@ func (us UsersService) Delete(
 func (us UsersService) SendVerificationEmail(
 	userName string,
 	userEmail string,
-) string {
+) verificationEmailResponse {
 	verificationCode := ""
 	for loop := 0; loop < 6; loop++ {
 		verificationCode += fmt.Sprint(rand.Intn(10))
@@ -259,8 +262,14 @@ func (us UsersService) SendVerificationEmail(
 	)
 
 	if err != nil {
-		return fmt.Sprint("Error sending email: ", err)
+		return verificationEmailResponse{
+			Message: "Error sending e-mail",
+			Error:   err,
+		}
 	}
 
-	return "Email successfully sent"
+	return verificationEmailResponse{
+		Message: "E-mail successfully sent",
+		Error:   nil,
+	}
 }
