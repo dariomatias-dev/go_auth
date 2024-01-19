@@ -1,6 +1,6 @@
 package usertype
 
-var (
+const (
 	User  = "user"
 	Admin = "admin"
 )

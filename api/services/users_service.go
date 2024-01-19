@@ -28,10 +28,10 @@ type UsersService struct {
 
 func (us UsersService) Create(
 	ctx *gin.Context,
-	createUser models.CreateUserModel,
+	createUserBody models.CreateUserModel,
 ) *uuid.UUID {
 	encryptedPassword, err := bcrypt.GenerateFromPassword(
-		[]byte(createUser.Password),
+		[]byte(createUserBody.Password),
 		10,
 	)
 	if err != nil {
@@ -44,9 +44,9 @@ func (us UsersService) Create(
 
 	// Create User
 	createUserParams := db.CreateUserParams{
-		Name:     createUser.Name,
-		Age:      createUser.Age,
-		Email:    createUser.Email,
+		Name:     createUserBody.Name,
+		Age:      createUserBody.Age,
+		Email:    createUserBody.Email,
 		Password: string(encryptedPassword),
 		Roles: []string{
 			usertype.User,
@@ -101,11 +101,11 @@ func (us UsersService) FindAll(
 func (us UsersService) Update(
 	ctx *gin.Context,
 	ID uuid.UUID,
-	updateUser models.UpdateModel,
+	updateUserBody models.UpdateModel,
 ) *db.UpdateUserRow {
 	getValue := utils.GetValue{}
 
-	password := updateUser.Password
+	password := updateUserBody.Password
 
 	if password != nil {
 		value, err := bcrypt.GenerateFromPassword(
@@ -122,9 +122,9 @@ func (us UsersService) Update(
 
 	updateUserParams := db.UpdateUserParams{
 		ID:       ID,
-		Name:     getValue.String(updateUser.Name),
-		Age:      getValue.Int32(updateUser.Age),
-		Email:    getValue.String(updateUser.Email),
+		Name:     getValue.String(updateUserBody.Name),
+		Age:      getValue.Int32(updateUserBody.Age),
+		Email:    getValue.String(updateUserBody.Email),
 		Password: getValue.String(password),
 	}
 

@@ -26,9 +26,9 @@ func NewUsersController(
 }
 
 func (uc usersController) Create(ctx *gin.Context) {
-	createUser := models.CreateUserModel{}
+	createUserBody := models.CreateUserModel{}
 
-	if err := ctx.ShouldBindJSON(&createUser); err != nil {
+	if err := ctx.ShouldBindJSON(&createUserBody); err != nil {
 		ctx.AbortWithStatusJSON(
 			http.StatusBadRequest,
 			gin.H{
@@ -39,7 +39,7 @@ func (uc usersController) Create(ctx *gin.Context) {
 		return
 	}
 
-	userID := uc.UsersServices.Create(ctx, createUser)
+	userID := uc.UsersServices.Create(ctx, createUserBody)
 
 	verificationCode := ""
 	for loop := 0; loop < 6; loop++ {
@@ -48,8 +48,8 @@ func (uc usersController) Create(ctx *gin.Context) {
 
 	verificationEmailResponse := uc.UsersServices.SendVerificationEmail(
 		verificationCode,
-		createUser.Name,
-		createUser.Email,
+		createUserBody.Name,
+		createUserBody.Email,
 	)
 
 	emailValidation := models.EmailValidationModel{
@@ -95,11 +95,11 @@ func (uc usersController) FindAll(ctx *gin.Context) {
 
 func (uc usersController) Update(ctx *gin.Context) {
 	userID := ctx.Param("id")
-	updateUser := models.UpdateModel{}
+	updateUserBody := models.UpdateModel{}
 
 	ID, _ := uuid.Parse(userID)
 
-	if err := ctx.ShouldBindJSON(&updateUser); err != nil {
+	if err := ctx.ShouldBindJSON(&updateUserBody); err != nil {
 		ctx.AbortWithStatusJSON(
 			http.StatusBadRequest,
 			gin.H{
@@ -113,7 +113,7 @@ func (uc usersController) Update(ctx *gin.Context) {
 	updatedUser := uc.UsersServices.Update(
 		ctx,
 		ID,
-		updateUser,
+		updateUserBody,
 	)
 
 	ctx.JSON(
