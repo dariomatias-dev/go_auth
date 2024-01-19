@@ -1,6 +1,15 @@
 ### Variables
 @apiurl = http://localhost:3001
 
+### Login
+POST {{apiurl}}/login
+Content-Type: application/json
+
+{
+    "email": "adelta893@gmail.com",
+    "password": "Auj@76vj7-b76B"
+}
+
 ### Validate Email
 POST {{apiurl}}/validate-email
 Content-Type: application/json

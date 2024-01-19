@@ -36,6 +36,7 @@ func (uc usersController) Create(ctx *gin.Context) {
 				"error":   err.Error(),
 			},
 		)
+		return
 	}
 
 	userID := uc.UsersServices.Create(ctx, createUser)

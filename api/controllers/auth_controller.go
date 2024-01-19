@@ -22,7 +22,25 @@ func NewAuthController(
 	}
 }
 
-func (ac authController) Login(ctx *gin.Context) {}
+func (ac authController) Login(ctx *gin.Context) {
+	loginBody := models.LoginModel{}
+
+	if err := ctx.ShouldBindJSON(&loginBody); err != nil {
+		ctx.AbortWithStatusJSON(
+			http.StatusOK,
+			gin.H{
+				"message": "Invalid body",
+				"error":   err,
+			},
+		)
+		return
+	}
+
+	ctx.JSON(
+		http.StatusOK,
+		loginBody,
+	)
+}
 
 func (ac authController) Refresh(ctx *gin.Context) {}
 
