@@ -40,11 +40,11 @@ func (q *Queries) DeleteEmailValidation(ctx context.Context, userID uuid.UUID) e
 }
 
 const getEmailValidation = `-- name: GetEmailValidation :one
-SELECT user_id, verification_code, expiration_time, created_at FROM "email_validations" WHERE user_id = $1
+SELECT user_id, verification_code, expiration_time, created_at FROM "email_validations" WHERE verification_code = $1
 `
 
-func (q *Queries) GetEmailValidation(ctx context.Context, userID uuid.UUID) (EmailValidations, error) {
-	row := q.db.QueryRowContext(ctx, getEmailValidation, userID)
+func (q *Queries) GetEmailValidation(ctx context.Context, verificationCode string) (EmailValidations, error) {
+	row := q.db.QueryRowContext(ctx, getEmailValidation, verificationCode)
 	var i EmailValidations
 	err := row.Scan(
 		&i.UserID,

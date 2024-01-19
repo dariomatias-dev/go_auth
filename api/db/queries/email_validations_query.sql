@@ -6,7 +6,7 @@ INSERT INTO
 VALUES ($1, $2, $3);
 
 -- name: GetEmailValidation :one
-SELECT * FROM "email_validations" WHERE user_id = $1;
+SELECT * FROM "email_validations" WHERE verification_code = $1;
 
 -- name: GetEmailValidations :many
 SELECT * FROM "email_validations";

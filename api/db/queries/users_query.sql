@@ -28,6 +28,9 @@ SET
     name = COALESCE(sqlc.narg ('name'), name),
     age = COALESCE(sqlc.narg ('age'), age),
     email = COALESCE(sqlc.narg ('email'), email),
+    valid_email = COALESCE(
+        sqlc.narg ('valid_email'), valid_email
+    ),
     password = COALESCE(
         sqlc.narg ('password'), password
     ),

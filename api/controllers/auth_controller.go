@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -26,9 +27,9 @@ func (ac authController) Login(ctx *gin.Context) {}
 func (ac authController) Refresh(ctx *gin.Context) {}
 
 func (ac authController) ValidateEmail(ctx *gin.Context) {
-	validateEmail := models.ValidateEmailModel{}
+	validateEmailBody := models.ValidateEmailModel{}
 
-	if err := ctx.ShouldBindJSON(&validateEmail); err != nil {
+	if err := ctx.ShouldBindJSON(&validateEmailBody); err != nil {
 		ctx.AbortWithStatusJSON(
 			http.StatusBadRequest,
 			gin.H{
@@ -39,8 +40,42 @@ func (ac authController) ValidateEmail(ctx *gin.Context) {
 		return
 	}
 
+	emailValidation := ac.AuthService.ValidateEmail(
+		ctx,
+		validateEmailBody.VerificationCode,
+	)
+	if emailValidation == nil {
+		return
+	}
+
+	ac.AuthService.DeleteEmailValidation(
+		ctx,
+		emailValidation.UserID,
+	)
+
+	if float64(emailValidation.ExpirationTime) < float64(time.Now().Unix()) {
+		ctx.AbortWithStatusJSON(
+			http.StatusUnauthorized,
+			gin.H{
+				"message": "Expired validation code",
+				"error": []float64{
+					float64(emailValidation.ExpirationTime),
+					float64(time.Now().Unix()),
+				},
+			},
+		)
+		return
+	}
+
+	ac.AuthService.UpdateUserEmailStatus(
+		ctx,
+		emailValidation.UserID,
+	)
+
 	ctx.JSON(
 		http.StatusOK,
-		validateEmail.VerificationCode,
+		gin.H{
+			"message": "Validated email",
+		},
 	)
 }

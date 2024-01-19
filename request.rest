@@ -1,6 +1,14 @@
 ### Variables
 @apiurl = http://localhost:3001
 
+### Validate Email
+POST {{apiurl}}/validate-email
+Content-Type: application/json
+
+{
+    "verification_code": "894510"
+}
+
 ### Create User
 POST {{apiurl}}/user
 Content-Type: application/json
@@ -9,7 +17,7 @@ Content-Type: application/json
     "name": "Dário Matias Sales",
     "age": 18,
     "email": "adelta893@gmail.com",
-    "password": "1234567890"
+    "password": "Auj@76vj7-b76B"
 }
 
 ### Get User
@@ -29,11 +37,11 @@ PATCH {{apiurl}}/user/52dcbdac-e0f5-41d6-999c-d0cf8a0d80cb
 Content-Type: application/json
 
 {
-    "age": 40
+    "age": 20
 }
 
 ### Delete User
-DELETE {{apiurl}}/user/3688cc7c-fa4d-48ab-8a17-859ca111820b3688cc7c-fa4d-48ab-8a17-859ca111820b3688cc7c-fa4d-48ab-8a17-859ca111820b
+DELETE {{apiurl}}/user/7017e65a-c0db-4f3c-83d2-fabad1128f8f
 Content-Type: application/json
 
 {}

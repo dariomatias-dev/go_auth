@@ -181,10 +181,13 @@ SET
     name = COALESCE($2, name),
     age = COALESCE($3, age),
     email = COALESCE($4, email),
-    password = COALESCE(
-        $5, password
+    valid_email = COALESCE(
+        $5, valid_email
     ),
-    roles = COALESCE($6, roles),
+    password = COALESCE(
+        $6, password
+    ),
+    roles = COALESCE($7, roles),
     updated_at = CURRENT_TIMESTAMP
 WHERE
     id = $1 RETURNING id,
@@ -197,12 +200,13 @@ WHERE
 `
 
 type UpdateUserParams struct {
-	ID       uuid.UUID      `json:"id"`
-	Name     sql.NullString `json:"name"`
-	Age      sql.NullInt32  `json:"age"`
-	Email    sql.NullString `json:"email"`
-	Password sql.NullString `json:"password"`
-	Roles    []string       `json:"roles"`
+	ID         uuid.UUID      `json:"id"`
+	Name       sql.NullString `json:"name"`
+	Age        sql.NullInt32  `json:"age"`
+	Email      sql.NullString `json:"email"`
+	ValidEmail sql.NullBool   `json:"valid_email"`
+	Password   sql.NullString `json:"password"`
+	Roles      []string       `json:"roles"`
 }
 
 type UpdateUserRow struct {
@@ -221,6 +225,7 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (UpdateU
 		arg.Name,
 		arg.Age,
 		arg.Email,
+		arg.ValidEmail,
 		arg.Password,
 		pq.Array(arg.Roles),
 	)
