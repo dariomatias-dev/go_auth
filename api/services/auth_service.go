@@ -3,11 +3,15 @@ package services
 import (
 	"database/sql"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 
 	db "github.com/dariomatias-dev/go_auth/api/db/sqlc"
+	tokentype "github.com/dariomatias-dev/go_auth/api/enums/token_type"
 )
 
 type AuthService struct {
@@ -17,6 +21,65 @@ type AuthService struct {
 func (as AuthService) Login() {}
 
 func (as AuthService) Refresh() {}
+
+func (as AuthService) GenerateTokens(
+	ctx *gin.Context,
+	userID string,
+	userRoles []string,
+) {
+	access_token := generateToken(
+		userID,
+		userRoles,
+		tokentype.AccessToken,
+		1,
+	)
+	refresh_token := generateToken(
+		userID,
+		userRoles,
+		tokentype.RefreshToken,
+		7,
+	)
+
+	ctx.JSON(
+		http.StatusOK,
+		gin.H{
+			"access_token":  access_token,
+			"refresh_token": refresh_token,
+		},
+	)
+}
+
+func generateToken(
+	userID string,
+	userRoles []string,
+	tokenType string,
+	daysToExpire int,
+) string {
+	payload := jwt.MapClaims{
+		"id":         userID,
+		"roles":      userRoles,
+		"token_type": tokenType,
+		"exp": time.Now().Add(
+			time.Hour * 24 * time.Duration(daysToExpire),
+		).Unix(),
+	}
+
+	token := jwt.NewWithClaims(
+		jwt.SigningMethodES256,
+		payload,
+	)
+
+	tokenString, err := token.SignedString(
+		[]byte(
+			os.Getenv("JWT_SECRET_KEY"),
+		),
+	)
+	if err != nil {
+		return ""
+	}
+
+	return tokenString
+}
 
 func (as AuthService) ValidateEmail(
 	ctx *gin.Context,
@@ -58,7 +121,7 @@ func (as AuthService) UpdateUserEmailStatus(
 	updateUserParams := db.UpdateUserParams{
 		ID: userID,
 		ValidEmail: sql.NullBool{
-			Bool: true,
+			Bool:  true,
 			Valid: true,
 		},
 	}
