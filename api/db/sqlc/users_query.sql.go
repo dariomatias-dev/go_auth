@@ -43,45 +43,17 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (uuid.UU
 	return id, err
 }
 
-const deleteUser = `-- name: DeleteUser :one
-DELETE FROM "users"
-WHERE
-    id = $1 RETURNING id,
-    name,
-    age,
-    email,
-    roles,
-    created_at,
-    updated_at
+const deleteUser = `-- name: DeleteUser :exec
+DELETE FROM "users" WHERE id = $1
 `
 
-type DeleteUserRow struct {
-	ID        uuid.UUID `json:"id"`
-	Name      string    `json:"name"`
-	Age       int32     `json:"age"`
-	Email     string    `json:"email"`
-	Roles     []string  `json:"roles"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-}
-
-func (q *Queries) DeleteUser(ctx context.Context, id uuid.UUID) (DeleteUserRow, error) {
-	row := q.db.QueryRowContext(ctx, deleteUser, id)
-	var i DeleteUserRow
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.Age,
-		&i.Email,
-		pq.Array(&i.Roles),
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
+func (q *Queries) DeleteUser(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteUser, id)
+	return err
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, name, age, email, valid_email, password, roles, created_at, updated_at FROM "users" WHERE id = $1
+SELECT id, name, age, email, valid_email, password, roles, login_attempts, created_at, updated_at FROM "users" WHERE id = $1
 `
 
 func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (Users, error) {
@@ -95,6 +67,7 @@ func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (Users, error) {
 		&i.ValidEmail,
 		&i.Password,
 		pq.Array(&i.Roles),
+		&i.LoginAttempts,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -102,7 +75,7 @@ func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (Users, error) {
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, name, age, email, valid_email, password, roles, created_at, updated_at FROM "users" WHERE email = $1
+SELECT id, name, age, email, valid_email, password, roles, login_attempts, created_at, updated_at FROM "users" WHERE email = $1
 `
 
 func (q *Queries) GetUserByEmail(ctx context.Context, email string) (Users, error) {
@@ -116,6 +89,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (Users, erro
 		&i.ValidEmail,
 		&i.Password,
 		pq.Array(&i.Roles),
+		&i.LoginAttempts,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -175,7 +149,7 @@ func (q *Queries) GetUsers(ctx context.Context) ([]GetUsersRow, error) {
 	return items, nil
 }
 
-const updateUser = `-- name: UpdateUser :one
+const updateUser = `-- name: UpdateUser :exec
 UPDATE "users"
 SET
     name = COALESCE($2, name),
@@ -188,39 +162,27 @@ SET
         $6, password
     ),
     roles = COALESCE($7, roles),
+    login_attempts = COALESCE(
+        $8, login_attempts
+    ),
     updated_at = CURRENT_TIMESTAMP
 WHERE
-    id = $1 RETURNING id,
-    name,
-    age,
-    email,
-    roles,
-    created_at,
-    updated_at
+    id = $1
 `
 
 type UpdateUserParams struct {
-	ID         uuid.UUID      `json:"id"`
-	Name       sql.NullString `json:"name"`
-	Age        sql.NullInt32  `json:"age"`
-	Email      sql.NullString `json:"email"`
-	ValidEmail sql.NullBool   `json:"valid_email"`
-	Password   sql.NullString `json:"password"`
-	Roles      []string       `json:"roles"`
+	ID            uuid.UUID      `json:"id"`
+	Name          sql.NullString `json:"name"`
+	Age           sql.NullInt32  `json:"age"`
+	Email         sql.NullString `json:"email"`
+	ValidEmail    sql.NullBool   `json:"valid_email"`
+	Password      sql.NullString `json:"password"`
+	Roles         []string       `json:"roles"`
+	LoginAttempts sql.NullInt32  `json:"login_attempts"`
 }
 
-type UpdateUserRow struct {
-	ID        uuid.UUID `json:"id"`
-	Name      string    `json:"name"`
-	Age       int32     `json:"age"`
-	Email     string    `json:"email"`
-	Roles     []string  `json:"roles"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-}
-
-func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (UpdateUserRow, error) {
-	row := q.db.QueryRowContext(ctx, updateUser,
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
+	_, err := q.db.ExecContext(ctx, updateUser,
 		arg.ID,
 		arg.Name,
 		arg.Age,
@@ -228,16 +190,7 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (UpdateU
 		arg.ValidEmail,
 		arg.Password,
 		pq.Array(arg.Roles),
+		arg.LoginAttempts,
 	)
-	var i UpdateUserRow
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.Age,
-		&i.Email,
-		pq.Array(&i.Roles),
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
+	return err
 }

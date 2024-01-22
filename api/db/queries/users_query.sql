@@ -22,7 +22,7 @@ SELECT
     updated_at
 FROM "users";
 
--- name: UpdateUser :one
+-- name: UpdateUser :exec
 UPDATE "users"
 SET
     name = COALESCE(sqlc.narg ('name'), name),
@@ -35,23 +35,12 @@ SET
         sqlc.narg ('password'), password
     ),
     roles = COALESCE(sqlc.narg ('roles'), roles),
+    login_attempts = COALESCE(
+        sqlc.narg ('login_attempts'), login_attempts
+    ),
     updated_at = CURRENT_TIMESTAMP
 WHERE
-    id = $1 RETURNING id,
-    name,
-    age,
-    email,
-    roles,
-    created_at,
-    updated_at;
+    id = $1;
 
--- name: DeleteUser :one
-DELETE FROM "users"
-WHERE
-    id = $1 RETURNING id,
-    name,
-    age,
-    email,
-    roles,
-    created_at,
-    updated_at;
+-- name: DeleteUser :exec
+DELETE FROM "users" WHERE id = $1;

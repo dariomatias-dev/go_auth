@@ -119,7 +119,7 @@ func (us UsersService) Update(
 	ctx *gin.Context,
 	ID uuid.UUID,
 	updateUserBody models.UpdateModel,
-) *db.UpdateUserRow {
+) {
 	getValue := utils.GetValue{}
 
 	password := updateUserBody.Password
@@ -145,29 +145,25 @@ func (us UsersService) Update(
 		Password: getValue.String(password),
 	}
 
-	updatedUser, err := us.DbQueries.UpdateUser(ctx, updateUserParams)
+	err := us.DbQueries.UpdateUser(ctx, updateUserParams)
 	if err != nil {
 		panic(err)
 	}
-
-	return &updatedUser
 }
 
 func (us UsersService) Delete(
 	ctx *gin.Context,
 	ID uuid.UUID,
-) *db.DeleteUserRow {
+) {
 	err := us.DbQueries.DeleteTokens(ctx, ID)
 	if err != nil {
 		panic(err)
 	}
 
-	deletedUser, err := us.DbQueries.DeleteUser(ctx, ID)
+	err = us.DbQueries.DeleteUser(ctx, ID)
 	if err != nil {
 		panic(err)
 	}
-
-	return &deletedUser
 }
 
 func (us UsersService) SendVerificationEmail(

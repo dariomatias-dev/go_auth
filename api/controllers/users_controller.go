@@ -110,7 +110,7 @@ func (uc usersController) Update(ctx *gin.Context) {
 		return
 	}
 
-	updatedUser := uc.UsersServices.Update(
+	uc.UsersServices.Update(
 		ctx,
 		ID,
 		updateUserBody,
@@ -118,7 +118,9 @@ func (uc usersController) Update(ctx *gin.Context) {
 
 	ctx.JSON(
 		http.StatusOK,
-		updatedUser,
+		gin.H{
+			"message": "Updated user",
+		},
 	)
 }
 
@@ -127,10 +129,12 @@ func (uc usersController) Delete(ctx *gin.Context) {
 
 	ID, _ := uuid.Parse(userID)
 
-	deletedUser := uc.UsersServices.Delete(ctx, ID)
+	uc.UsersServices.Delete(ctx, ID)
 
 	ctx.JSON(
 		http.StatusOK,
-		deletedUser,
+		gin.H{
+			"message": "User deleted",
+		},
 	)
 }
