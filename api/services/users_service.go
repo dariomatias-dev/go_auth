@@ -1,6 +1,7 @@
 package services
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
 	"net/mail"
@@ -80,7 +81,23 @@ func (us UsersService) FindOne(
 	ID uuid.UUID,
 ) *db.Users {
 	user, err := us.DbQueries.GetUser(ctx, ID)
+
 	if err != nil {
+		panic(err)
+	}
+
+	return &user
+}
+
+func (us UsersService) FindOneByEmail(
+	ctx *gin.Context,
+	email string,
+) *db.Users {
+	user, err := us.DbQueries.GetUserByEmail(ctx, email)
+
+	if err == sql.ErrNoRows {
+		return nil
+	} else if err != nil {
 		panic(err)
 	}
 
@@ -276,9 +293,9 @@ func (us UsersService) CreateEmailValidation(
 	emailValidation models.EmailValidationModel,
 ) {
 	createEmailValidationParams := db.CreateEmailValidationParams{
-		UserID: emailValidation.UserID,
+		UserID:           emailValidation.UserID,
 		VerificationCode: emailValidation.VerificationCode,
-		ExpirationTime: int32(emailValidation.ExpirationTime),
+		ExpirationTime:   int32(emailValidation.ExpirationTime),
 	}
 
 	err := us.DbQueries.CreateEmailValidation(ctx, createEmailValidationParams)

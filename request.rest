@@ -1,13 +1,22 @@
 ### Variables
 @apiurl = http://localhost:3001
 
-### Login
+### Login 1
 POST {{apiurl}}/login
 Content-Type: application/json
 
 {
     "email": "adelta893@gmail.com",
     "password": "Auj@76vj7-b76B"
+}
+
+### Login 2
+POST {{apiurl}}/login
+Content-Type: application/json
+
+{
+    "email": "marciotavares@gmail.com",
+    "password": "u6VI*j7i8,0H"
 }
 
 ### Validate Email
@@ -18,7 +27,7 @@ Content-Type: application/json
     "verification_code": "894510"
 }
 
-### Create User
+### Create User 1
 POST {{apiurl}}/user
 Content-Type: application/json
 
@@ -27,6 +36,17 @@ Content-Type: application/json
     "age": 18,
     "email": "adelta893@gmail.com",
     "password": "Auj@76vj7-b76B"
+}
+
+### Create User 2
+POST {{apiurl}}/user
+Content-Type: application/json
+
+{
+    "name": "Marcio Tavares",
+    "age": 18,
+    "email": "marciotavares@gmail.com",
+    "password": "u6VI*j7i8,0H"
 }
 
 ### Get User

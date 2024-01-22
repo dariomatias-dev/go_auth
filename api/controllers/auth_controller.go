@@ -5,20 +5,24 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/dariomatias-dev/go_auth/api/models"
 	"github.com/dariomatias-dev/go_auth/api/services"
 )
 
 type authController struct {
-	AuthService services.AuthService
+	UsersService services.UsersService
+	AuthService  services.AuthService
 }
 
 func NewAuthController(
 	authService services.AuthService,
+	usersService services.UsersService,
 ) *authController {
 	return &authController{
-		AuthService: authService,
+		AuthService:  authService,
+		UsersService: usersService,
 	}
 }
 
@@ -36,9 +40,43 @@ func (ac authController) Login(ctx *gin.Context) {
 		return
 	}
 
+	user := ac.UsersService.FindOneByEmail(
+		ctx,
+		loginBody.Email,
+	)
+
+	if user != nil {
+		if !user.ValidEmail.Bool {
+			ctx.JSON(
+				http.StatusOK,
+				gin.H{
+					"message": "Email not verified",
+				},
+			)
+			return
+		}
+
+		validPassword := bcrypt.CompareHashAndPassword(
+			[]byte(user.Password),
+			[]byte(loginBody.Password),
+		)
+
+		if validPassword == nil {
+			ctx.JSON(
+				http.StatusOK,
+				gin.H{
+					"message": "Authenticated",
+				},
+			)
+			return
+		}
+	}
+
 	ctx.JSON(
 		http.StatusOK,
-		loginBody,
+		gin.H{
+			"message": "Invalid email or password",
+		},
 	)
 }
 

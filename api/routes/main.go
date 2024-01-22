@@ -13,15 +13,18 @@ func AppRoutes(
 	router *gin.Engine,
 	dbQueries *db.Queries,
 ) *gin.RouterGroup {
+	usersService := services.UsersService{
+		DbQueries: dbQueries,
+	}
+
 	authController := controllers.NewAuthController(
 		services.AuthService{
 			DbQueries: dbQueries,
 		},
+		usersService,
 	)
 	usersController := controllers.NewUsersController(
-		services.UsersService{
-			DbQueries: dbQueries,
-		},
+		usersService,
 	)
 
 	router.Use(middlewares.HandleError())
