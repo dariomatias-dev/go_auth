@@ -157,7 +157,7 @@ func (us UsersService) Delete(
 	ctx *gin.Context,
 	ID uuid.UUID,
 ) *db.DeleteUserRow {
-	_, err := us.DbQueries.DeleteTokens(ctx, ID)
+	err := us.DbQueries.DeleteTokens(ctx, ID)
 	if err != nil {
 		panic(err)
 	}

@@ -12,6 +12,7 @@ import (
 
 	db "github.com/dariomatias-dev/go_auth/api/db/sqlc"
 	tokentype "github.com/dariomatias-dev/go_auth/api/enums/token_type"
+	"github.com/dariomatias-dev/go_auth/api/models"
 )
 
 type AuthService struct {
@@ -26,14 +27,14 @@ func (as AuthService) GenerateTokens(
 	ctx *gin.Context,
 	userID uuid.UUID,
 	userRoles []string,
-) *[]string {
-	access_token := generateToken(
+) *models.Tokens {
+	accessToken := generateToken(
 		userID,
 		userRoles,
 		tokentype.AccessToken,
 		1,
 	)
-	refresh_token := generateToken(
+	refreshToken := generateToken(
 		userID,
 		userRoles,
 		tokentype.RefreshToken,
@@ -43,14 +44,14 @@ func (as AuthService) GenerateTokens(
 	ctx.JSON(
 		http.StatusOK,
 		gin.H{
-			"access_token":  access_token,
-			"refresh_token": refresh_token,
+			"access_token":  accessToken,
+			"refresh_token": refreshToken,
 		},
 	)
 
-	return &[]string{
-		access_token,
-		refresh_token,
+	return &models.Tokens{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
 	}
 }
 
@@ -132,4 +133,23 @@ func generateToken(
 	}
 
 	return tokenString
+}
+
+func (as AuthService) UpdateUserTokens(
+	ctx *gin.Context,
+	userID uuid.UUID,
+	tokens *models.Tokens,
+) error {
+	UpdateTokensParams := db.UpdateTokensParams{
+		UserID:       userID,
+		AccessToken:  tokens.AccessToken,
+		RefreshToken: tokens.RefreshToken,
+	}
+
+	err := as.DbQueries.UpdateTokens(
+		ctx,
+		UpdateTokensParams,
+	)
+
+	return err
 }

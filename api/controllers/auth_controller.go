@@ -62,10 +62,16 @@ func (ac authController) Login(ctx *gin.Context) {
 		)
 
 		if validPassword == nil {
-			ac.AuthService.GenerateTokens(
+			tokens := ac.AuthService.GenerateTokens(
 				ctx,
 				user.ID,
 				user.Roles,
+			)
+
+			ac.AuthService.UpdateUserTokens(
+				ctx,
+				user.ID,
+				tokens,
 			)
 
 			return

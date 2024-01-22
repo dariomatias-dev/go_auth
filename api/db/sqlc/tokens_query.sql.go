@@ -37,30 +37,23 @@ func (q *Queries) CreateTokens(ctx context.Context, arg CreateTokensParams) (Tok
 	return i, err
 }
 
-const deleteTokens = `-- name: DeleteTokens :one
-DELETE FROM "tokens" WHERE user_id = $1 RETURNING user_id, access_token, refresh_token, updated_at
+const deleteTokens = `-- name: DeleteTokens :exec
+DELETE FROM "tokens" WHERE user_id = $1
 `
 
-func (q *Queries) DeleteTokens(ctx context.Context, userID uuid.UUID) (Tokens, error) {
-	row := q.db.QueryRowContext(ctx, deleteTokens, userID)
-	var i Tokens
-	err := row.Scan(
-		&i.UserID,
-		&i.AccessToken,
-		&i.RefreshToken,
-		&i.UpdatedAt,
-	)
-	return i, err
+func (q *Queries) DeleteTokens(ctx context.Context, userID uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteTokens, userID)
+	return err
 }
 
-const updateTokens = `-- name: UpdateTokens :one
+const updateTokens = `-- name: UpdateTokens :exec
 UPDATE "tokens"
 SET
     access_token = $2,
     refresh_token = $3,
     updated_at = CURRENT_TIMESTAMP
 WHERE
-    user_id = $1 RETURNING user_id, access_token, refresh_token, updated_at
+    user_id = $1
 `
 
 type UpdateTokensParams struct {
@@ -69,14 +62,7 @@ type UpdateTokensParams struct {
 	RefreshToken string    `json:"refresh_token"`
 }
 
-func (q *Queries) UpdateTokens(ctx context.Context, arg UpdateTokensParams) (Tokens, error) {
-	row := q.db.QueryRowContext(ctx, updateTokens, arg.UserID, arg.AccessToken, arg.RefreshToken)
-	var i Tokens
-	err := row.Scan(
-		&i.UserID,
-		&i.AccessToken,
-		&i.RefreshToken,
-		&i.UpdatedAt,
-	)
-	return i, err
+func (q *Queries) UpdateTokens(ctx context.Context, arg UpdateTokensParams) error {
+	_, err := q.db.ExecContext(ctx, updateTokens, arg.UserID, arg.AccessToken, arg.RefreshToken)
+	return err
 }
