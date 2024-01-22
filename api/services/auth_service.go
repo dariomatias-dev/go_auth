@@ -24,9 +24,9 @@ func (as AuthService) Refresh() {}
 
 func (as AuthService) GenerateTokens(
 	ctx *gin.Context,
-	userID string,
+	userID uuid.UUID,
 	userRoles []string,
-) {
+) *[]string {
 	access_token := generateToken(
 		userID,
 		userRoles,
@@ -47,38 +47,11 @@ func (as AuthService) GenerateTokens(
 			"refresh_token": refresh_token,
 		},
 	)
-}
 
-func generateToken(
-	userID string,
-	userRoles []string,
-	tokenType string,
-	daysToExpire int,
-) string {
-	payload := jwt.MapClaims{
-		"id":         userID,
-		"roles":      userRoles,
-		"token_type": tokenType,
-		"exp": time.Now().Add(
-			time.Hour * 24 * time.Duration(daysToExpire),
-		).Unix(),
+	return &[]string{
+		access_token,
+		refresh_token,
 	}
-
-	token := jwt.NewWithClaims(
-		jwt.SigningMethodES256,
-		payload,
-	)
-
-	tokenString, err := token.SignedString(
-		[]byte(
-			os.Getenv("JWT_SECRET_KEY"),
-		),
-	)
-	if err != nil {
-		return ""
-	}
-
-	return tokenString
 }
 
 func (as AuthService) ValidateEmail(
@@ -127,4 +100,36 @@ func (as AuthService) UpdateUserEmailStatus(
 	}
 
 	as.DbQueries.UpdateUser(ctx, updateUserParams)
+}
+
+func generateToken(
+	userID uuid.UUID,
+	userRoles []string,
+	tokenType string,
+	daysToExpire int,
+) string {
+	payload := jwt.MapClaims{
+		"id":         userID,
+		"roles":      userRoles,
+		"token_type": tokenType,
+		"exp": time.Now().Add(
+			time.Hour * 24 * time.Duration(daysToExpire),
+		).Unix(),
+	}
+
+	token := jwt.NewWithClaims(
+		jwt.SigningMethodHS256,
+		payload,
+	)
+
+	tokenString, err := token.SignedString(
+		[]byte(
+			os.Getenv("JWT_SECRET_KEY"),
+		),
+	)
+	if err != nil {
+		return ""
+	}
+
+	return tokenString
 }

@@ -62,12 +62,12 @@ func (ac authController) Login(ctx *gin.Context) {
 		)
 
 		if validPassword == nil {
-			ctx.JSON(
-				http.StatusOK,
-				gin.H{
-					"message": "Authenticated",
-				},
+			ac.AuthService.GenerateTokens(
+				ctx,
+				user.ID,
+				user.Roles,
 			)
+
 			return
 		}
 	}
