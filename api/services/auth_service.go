@@ -103,6 +103,28 @@ func (as AuthService) UpdateUserEmailStatus(
 	as.DbQueries.UpdateUser(ctx, updateUserParams)
 }
 
+func (as AuthService) GetLoginAttempts(
+	ctx *gin.Context,
+	userID uuid.UUID,
+) db.GetLoginAttemptRow {
+	loginAttempt, err := as.DbQueries.GetLoginAttempt(ctx, userID)
+	if err != nil {
+		panic(err)
+	}
+
+	return loginAttempt
+}
+
+func (as AuthService) IncrementLoginAttemptCounter(
+	ctx *gin.Context,
+	userID uuid.UUID,
+) {
+	err := as.DbQueries.IncrementLoginAttemptCounter(ctx, userID)
+	if err != nil {
+		panic(err)
+	}
+}
+
 func generateToken(
 	userID uuid.UUID,
 	userRoles []string,

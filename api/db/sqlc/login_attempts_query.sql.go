@@ -7,7 +7,7 @@ package db
 
 import (
 	"context"
-	"database/sql"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -31,13 +31,23 @@ func (q *Queries) DeleteLoginAttempt(ctx context.Context, userID uuid.UUID) erro
 }
 
 const getLoginAttempt = `-- name: GetLoginAttempt :one
-SELECT user_id, attempts, last_failed_login_date FROM "login_attempts" WHERE user_id = $1
+SELECT
+    attempts,
+    last_failed_login_date
+FROM "login_attempts"
+WHERE
+    user_id = $1
 `
 
-func (q *Queries) GetLoginAttempt(ctx context.Context, userID uuid.UUID) (LoginAttempts, error) {
+type GetLoginAttemptRow struct {
+	Attempts            int32     `json:"attempts"`
+	LastFailedLoginDate time.Time `json:"last_failed_login_date"`
+}
+
+func (q *Queries) GetLoginAttempt(ctx context.Context, userID uuid.UUID) (GetLoginAttemptRow, error) {
 	row := q.db.QueryRowContext(ctx, getLoginAttempt, userID)
-	var i LoginAttempts
-	err := row.Scan(&i.UserID, &i.Attempts, &i.LastFailedLoginDate)
+	var i GetLoginAttemptRow
+	err := row.Scan(&i.Attempts, &i.LastFailedLoginDate)
 	return i, err
 }
 
@@ -68,23 +78,27 @@ func (q *Queries) GetLoginAttempts(ctx context.Context) ([]LoginAttempts, error)
 	return items, nil
 }
 
-const updateLoginAttempts = `-- name: UpdateLoginAttempts :exec
+const getLoginFullAttempt = `-- name: GetLoginFullAttempt :one
+SELECT user_id, attempts, last_failed_login_date FROM "login_attempts" WHERE user_id = $1
+`
+
+func (q *Queries) GetLoginFullAttempt(ctx context.Context, userID uuid.UUID) (LoginAttempts, error) {
+	row := q.db.QueryRowContext(ctx, getLoginFullAttempt, userID)
+	var i LoginAttempts
+	err := row.Scan(&i.UserID, &i.Attempts, &i.LastFailedLoginDate)
+	return i, err
+}
+
+const incrementLoginAttemptCounter = `-- name: IncrementLoginAttemptCounter :exec
 UPDATE "login_attempts"
 SET
-    attempts = COALESCE(
-        $2, attempts
-    ),
+    attempts = attempts + 1,
     last_failed_login_date = CURRENT_TIMESTAMP
 WHERE
     user_id = $1
 `
 
-type UpdateLoginAttemptsParams struct {
-	UserID   uuid.UUID     `json:"user_id"`
-	Attempts sql.NullInt32 `json:"attempts"`
-}
-
-func (q *Queries) UpdateLoginAttempts(ctx context.Context, arg UpdateLoginAttemptsParams) error {
-	_, err := q.db.ExecContext(ctx, updateLoginAttempts, arg.UserID, arg.Attempts)
+func (q *Queries) IncrementLoginAttemptCounter(ctx context.Context, userID uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, incrementLoginAttemptCounter, userID)
 	return err
 }

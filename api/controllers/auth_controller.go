@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"fmt"
+	"math"
 	"net/http"
 	"time"
 
@@ -56,6 +58,35 @@ func (ac authController) Login(ctx *gin.Context) {
 			return
 		}
 
+		loginAttempts := ac.AuthService.GetLoginAttempts(ctx, user.ID)
+
+		if loginAttempts.Attempts == 10 {
+			currentTime := time.Now()
+			lastFailedLoginDate := loginAttempts.LastFailedLoginDate.Add(time.Hour * 24)
+			hoursLeft := lastFailedLoginDate.Sub(
+				currentTime,
+			).Hours()
+
+			_, value := math.Modf(hoursLeft)
+			if value != 0 {
+				hoursLeft++
+			}
+
+			timeLeft := int(hoursLeft)
+			errorMessage := fmt.Sprintf(
+				"Your account has been temporarily blocked due to multiple unsuccessful login attempts. Please wait for %d hours before trying again. If issues persist, contact support.",
+				timeLeft,
+			)
+
+			ctx.JSON(
+				http.StatusOK,
+				gin.H{
+					"message": errorMessage,
+				},
+			)
+			return
+		}
+
 		validPassword := bcrypt.CompareHashAndPassword(
 			[]byte(user.Password),
 			[]byte(loginBody.Password),
@@ -76,6 +107,11 @@ func (ac authController) Login(ctx *gin.Context) {
 
 			return
 		}
+
+		ac.AuthService.IncrementLoginAttemptCounter(
+			ctx,
+			user.ID,
+		)
 	}
 
 	ctx.JSON(
