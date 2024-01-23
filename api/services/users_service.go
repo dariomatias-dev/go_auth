@@ -43,7 +43,7 @@ func (us UsersService) Create(
 		return nil
 	}
 
-	// Create User
+	// Create User Table
 	createUserParams := db.CreateUserParams{
 		Name:     createUserBody.Name,
 		Age:      createUserBody.Age,
@@ -55,20 +55,24 @@ func (us UsersService) Create(
 	}
 
 	userID, err := us.DbQueries.CreateUser(ctx, createUserParams)
-
 	if err != nil {
 		panic(err)
 	}
 
-	// Create Tokens
-	createTokensParams := db.CreateTokensParams{
-		UserID:       userID,
-		AccessToken:  "",
-		RefreshToken: "",
+	// Create Tokens Table
+	err = us.DbQueries.CreateTokens(
+		ctx,
+		userID,
+	)
+	if err != nil {
+		panic(err)
 	}
 
-	_, err = us.DbQueries.CreateTokens(ctx, createTokensParams)
-
+	// Create Login Attempt Table
+	err = us.DbQueries.CreateLoginAttempts(
+		ctx,
+		userID,
+	)
 	if err != nil {
 		panic(err)
 	}
@@ -156,6 +160,11 @@ func (us UsersService) Delete(
 	ID uuid.UUID,
 ) {
 	err := us.DbQueries.DeleteTokens(ctx, ID)
+	if err != nil {
+		panic(err)
+	}
+
+	err = us.DbQueries.DeleteLoginAttempt(ctx, ID)
 	if err != nil {
 		panic(err)
 	}

@@ -11,30 +11,13 @@ import (
 	"github.com/google/uuid"
 )
 
-const createTokens = `-- name: CreateTokens :one
-INSERT INTO
-    "tokens" (
-        user_id, access_token, refresh_token
-    )
-VALUES ($1, $2, $3) RETURNING user_id, access_token, refresh_token, updated_at
+const createTokens = `-- name: CreateTokens :exec
+INSERT INTO "tokens" (user_id) VALUES ($1)
 `
 
-type CreateTokensParams struct {
-	UserID       uuid.UUID `json:"user_id"`
-	AccessToken  string    `json:"access_token"`
-	RefreshToken string    `json:"refresh_token"`
-}
-
-func (q *Queries) CreateTokens(ctx context.Context, arg CreateTokensParams) (Tokens, error) {
-	row := q.db.QueryRowContext(ctx, createTokens, arg.UserID, arg.AccessToken, arg.RefreshToken)
-	var i Tokens
-	err := row.Scan(
-		&i.UserID,
-		&i.AccessToken,
-		&i.RefreshToken,
-		&i.UpdatedAt,
-	)
-	return i, err
+func (q *Queries) CreateTokens(ctx context.Context, userID uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, createTokens, userID)
+	return err
 }
 
 const deleteTokens = `-- name: DeleteTokens :exec
@@ -44,6 +27,54 @@ DELETE FROM "tokens" WHERE user_id = $1
 func (q *Queries) DeleteTokens(ctx context.Context, userID uuid.UUID) error {
 	_, err := q.db.ExecContext(ctx, deleteTokens, userID)
 	return err
+}
+
+const getAllTokens = `-- name: GetAllTokens :many
+SELECT user_id, access_token, refresh_token, updated_at FROM "tokens"
+`
+
+func (q *Queries) GetAllTokens(ctx context.Context) ([]Tokens, error) {
+	rows, err := q.db.QueryContext(ctx, getAllTokens)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Tokens
+	for rows.Next() {
+		var i Tokens
+		if err := rows.Scan(
+			&i.UserID,
+			&i.AccessToken,
+			&i.RefreshToken,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getTokens = `-- name: GetTokens :one
+SELECT user_id, access_token, refresh_token, updated_at FROM "tokens" WHERE user_id = $1
+`
+
+func (q *Queries) GetTokens(ctx context.Context, userID uuid.UUID) (Tokens, error) {
+	row := q.db.QueryRowContext(ctx, getTokens, userID)
+	var i Tokens
+	err := row.Scan(
+		&i.UserID,
+		&i.AccessToken,
+		&i.RefreshToken,
+		&i.UpdatedAt,
+	)
+	return i, err
 }
 
 const updateTokens = `-- name: UpdateTokens :exec

@@ -15,8 +15,8 @@ CREATE TABLE IF NOT EXISTS "users" (
 
 CREATE TABLE IF NOT EXISTS "tokens" (
     user_id UUID PRIMARY KEY,
-    access_token TEXT NOT NULL,
-    refresh_token TEXT NOT NULL,
+    access_token TEXT DEFAULT '' NOT NULL,
+    refresh_token TEXT DEFAULT '' NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
     FOREIGN KEY(user_id) REFERENCES users(id)

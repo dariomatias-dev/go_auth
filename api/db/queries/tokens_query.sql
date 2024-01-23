@@ -1,9 +1,11 @@
--- name: CreateTokens :one
-INSERT INTO
-    "tokens" (
-        user_id, access_token, refresh_token
-    )
-VALUES ($1, $2, $3) RETURNING *;
+-- name: CreateTokens :exec
+INSERT INTO "tokens" (user_id) VALUES ($1);
+
+-- name: GetTokens :one
+SELECT * FROM "tokens" WHERE user_id = $1;
+
+-- name: GetAllTokens :many
+SELECT * FROM "tokens";
 
 -- name: UpdateTokens :exec
 UPDATE "tokens"
