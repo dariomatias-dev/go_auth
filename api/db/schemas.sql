@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS "users" (
     valid_email BOOLEAN DEFAULT FALSE,
     password TEXT NOT NULL,
     roles TEXT[] NOT NULL,
-    login_attempts INTEGER DEFAULT 0 NOT NULL,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
@@ -19,6 +18,14 @@ CREATE TABLE IF NOT EXISTS "tokens" (
     access_token TEXT NOT NULL,
     refresh_token TEXT NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS "login_attempts" (
+    user_id UUID PRIMARY KEY,
+    attempts INTEGER DEFAULT 0 NOT NULL,
+    last_failed_login_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
     FOREIGN KEY(user_id) REFERENCES users(id)
 );

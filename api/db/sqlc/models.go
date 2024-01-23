@@ -18,6 +18,12 @@ type EmailValidations struct {
 	CreatedAt        time.Time `json:"created_at"`
 }
 
+type LoginAttempts struct {
+	UserID              uuid.UUID `json:"user_id"`
+	Attempts            int32     `json:"attempts"`
+	LastFailedLoginDate time.Time `json:"last_failed_login_date"`
+}
+
 type Tokens struct {
 	UserID       uuid.UUID `json:"user_id"`
 	AccessToken  string    `json:"access_token"`
@@ -26,14 +32,13 @@ type Tokens struct {
 }
 
 type Users struct {
-	ID            uuid.UUID    `json:"id"`
-	Name          string       `json:"name"`
-	Age           int32        `json:"age"`
-	Email         string       `json:"email"`
-	ValidEmail    sql.NullBool `json:"valid_email"`
-	Password      string       `json:"password"`
-	Roles         []string     `json:"roles"`
-	LoginAttempts int32        `json:"login_attempts"`
-	CreatedAt     time.Time    `json:"created_at"`
-	UpdatedAt     time.Time    `json:"updated_at"`
+	ID         uuid.UUID    `json:"id"`
+	Name       string       `json:"name"`
+	Age        int32        `json:"age"`
+	Email      string       `json:"email"`
+	ValidEmail sql.NullBool `json:"valid_email"`
+	Password   string       `json:"password"`
+	Roles      []string     `json:"roles"`
+	CreatedAt  time.Time    `json:"created_at"`
+	UpdatedAt  time.Time    `json:"updated_at"`
 }

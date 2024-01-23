@@ -53,7 +53,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id uuid.UUID) error {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, name, age, email, valid_email, password, roles, login_attempts, created_at, updated_at FROM "users" WHERE id = $1
+SELECT id, name, age, email, valid_email, password, roles, created_at, updated_at FROM "users" WHERE id = $1
 `
 
 func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (Users, error) {
@@ -67,7 +67,6 @@ func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (Users, error) {
 		&i.ValidEmail,
 		&i.Password,
 		pq.Array(&i.Roles),
-		&i.LoginAttempts,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -75,7 +74,7 @@ func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (Users, error) {
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, name, age, email, valid_email, password, roles, login_attempts, created_at, updated_at FROM "users" WHERE email = $1
+SELECT id, name, age, email, valid_email, password, roles, created_at, updated_at FROM "users" WHERE email = $1
 `
 
 func (q *Queries) GetUserByEmail(ctx context.Context, email string) (Users, error) {
@@ -89,7 +88,6 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (Users, erro
 		&i.ValidEmail,
 		&i.Password,
 		pq.Array(&i.Roles),
-		&i.LoginAttempts,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -162,23 +160,19 @@ SET
         $6, password
     ),
     roles = COALESCE($7, roles),
-    login_attempts = COALESCE(
-        $8, login_attempts
-    ),
     updated_at = CURRENT_TIMESTAMP
 WHERE
     id = $1
 `
 
 type UpdateUserParams struct {
-	ID            uuid.UUID      `json:"id"`
-	Name          sql.NullString `json:"name"`
-	Age           sql.NullInt32  `json:"age"`
-	Email         sql.NullString `json:"email"`
-	ValidEmail    sql.NullBool   `json:"valid_email"`
-	Password      sql.NullString `json:"password"`
-	Roles         []string       `json:"roles"`
-	LoginAttempts sql.NullInt32  `json:"login_attempts"`
+	ID         uuid.UUID      `json:"id"`
+	Name       sql.NullString `json:"name"`
+	Age        sql.NullInt32  `json:"age"`
+	Email      sql.NullString `json:"email"`
+	ValidEmail sql.NullBool   `json:"valid_email"`
+	Password   sql.NullString `json:"password"`
+	Roles      []string       `json:"roles"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
@@ -190,7 +184,6 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
 		arg.ValidEmail,
 		arg.Password,
 		pq.Array(arg.Roles),
-		arg.LoginAttempts,
 	)
 	return err
 }

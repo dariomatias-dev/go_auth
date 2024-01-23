@@ -35,9 +35,6 @@ SET
         sqlc.narg ('password'), password
     ),
     roles = COALESCE(sqlc.narg ('roles'), roles),
-    login_attempts = COALESCE(
-        sqlc.narg ('login_attempts'), login_attempts
-    ),
     updated_at = CURRENT_TIMESTAMP
 WHERE
     id = $1;
