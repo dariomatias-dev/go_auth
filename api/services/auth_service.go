@@ -2,8 +2,10 @@ package services
 
 import (
 	"database/sql"
+	"errors"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -22,6 +24,43 @@ type AuthService struct {
 func (as AuthService) Login() {}
 
 func (as AuthService) Refresh() {}
+
+func (as AuthService) GetToken(
+	ctx *gin.Context,
+) (*string, bool) {
+	token, err := GetAuthorizationToken(ctx)
+	if err != nil {
+		ctx.AbortWithStatusJSON(
+			http.StatusBadRequest,
+			gin.H{
+				"message": err.Error(),
+			},
+		)
+		return nil, false
+	}
+
+	return token, true
+}
+
+func GetAuthorizationToken(
+	ctx *gin.Context,
+) (*string, error) {
+	authorization := ctx.GetHeader("Authorization")
+
+	if index := strings.Index(authorization, " "); index == -1 {
+		return nil, errors.New("invalid token")
+	}
+
+	authorizationToken := strings.Split(authorization, " ")
+	typeToken := authorizationToken[0]
+	token := authorizationToken[1]
+
+	if typeToken != "Bearer" {
+		return  nil, errors.New("invalid token")
+	}
+
+	return &token, nil
+}
 
 func (as AuthService) GenerateTokens(
 	ctx *gin.Context,

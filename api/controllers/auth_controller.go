@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -124,29 +123,8 @@ func (ac authController) Login(ctx *gin.Context) {
 }
 
 func (ac authController) Refresh(ctx *gin.Context) {
-	authorization := ctx.GetHeader("Authorization")
-
-	if index := strings.Index(authorization, " "); index == -1 {
-		ctx.AbortWithStatusJSON(
-			http.StatusBadRequest,
-			gin.H{
-				"message": "Invalid token",
-			},
-		)
-		return
-	}
-
-	authorizationToken := strings.Split(authorization, " ")
-	typeToken := authorizationToken[0]
-	token := authorizationToken[1]
-
-	if typeToken != "Bearer" {
-		ctx.AbortWithStatusJSON(
-			http.StatusBadRequest,
-			gin.H{
-				"message": "Invalid token",
-			},
-		)
+	token, ok := ac.AuthService.GetToken(ctx)
+	if !ok {
 		return
 	}
 
