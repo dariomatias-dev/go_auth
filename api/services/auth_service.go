@@ -231,6 +231,18 @@ func generateToken(
 	return tokenString
 }
 
+func (as AuthService) GetUserTokens(
+	ctx *gin.Context,
+	userID uuid.UUID,
+) db.Tokens {
+	userTokens, err := as.DbQueries.GetTokens(ctx, userID)
+	if err != nil {
+		panic(err)
+	}
+
+	return userTokens
+}
+
 func (as AuthService) UpdateUserTokens(
 	ctx *gin.Context,
 	userID uuid.UUID,

@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 
 	tokentype "github.com/dariomatias-dev/go_auth/api/enums/token_type"
@@ -145,6 +146,23 @@ func (ac authController) Refresh(ctx *gin.Context) {
 				gin.H{
 					"message": "invalid token",
 					"error":   "token is not refresh type",
+				},
+			)
+			return
+		}
+
+		userID, _ := uuid.Parse(mapClaims["id"].(string))
+
+		userTokens := ac.AuthService.GetUserTokens(
+			ctx,
+			userID,
+		)
+
+		if userTokens.RefreshToken != *tokenString {
+			ctx.AbortWithStatusJSON(
+				http.StatusUnauthorized,
+				gin.H{
+					"message": "invalid token",
 				},
 			)
 			return
