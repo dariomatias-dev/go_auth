@@ -57,7 +57,7 @@ func GetAuthorizationToken(
 	token := authorizationToken[1]
 
 	if typeToken != "Bearer" {
-		return  nil, errors.New("invalid token")
+		return nil, errors.New("invalid token")
 	}
 
 	return &token, nil
@@ -101,7 +101,7 @@ func (as AuthService) GetPayload(
 ) (*jwt.Token, bool) {
 	token, err := jwt.Parse(
 		tokenString,
-		func (token *jwt.Token) (any, error) {
+		func(token *jwt.Token) (any, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf(
 					"unexpected signing method: %v",
@@ -120,6 +120,7 @@ func (as AuthService) GetPayload(
 			http.StatusBadRequest,
 			gin.H{
 				"message": "invalid token",
+				"error":   err.Error(),
 			},
 		)
 		return nil, false

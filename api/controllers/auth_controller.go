@@ -7,8 +7,10 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 
+	tokentype "github.com/dariomatias-dev/go_auth/api/enums/token_type"
 	"github.com/dariomatias-dev/go_auth/api/models"
 	"github.com/dariomatias-dev/go_auth/api/services"
 )
@@ -136,9 +138,32 @@ func (ac authController) Refresh(ctx *gin.Context) {
 		return
 	}
 
+	if mapClaims, ok := payload.Claims.(jwt.MapClaims); ok || payload.Valid {
+		if mapClaims["token_type"] != tokentype.RefreshToken {
+			ctx.AbortWithStatusJSON(
+				http.StatusUnauthorized,
+				gin.H{
+					"message": "invalid token",
+					"error":   "token is not refresh type",
+				},
+			)
+			return
+		}
+
+		ctx.JSON(
+			http.StatusOK,
+			gin.H{
+				"message": "Generated new tokens",
+			},
+		)
+		return
+	}
+
 	ctx.AbortWithStatusJSON(
-		http.StatusOK,
-		payload,
+		http.StatusUnauthorized,
+		gin.H{
+			"message": "invalid token",
+		},
 	)
 }
 
