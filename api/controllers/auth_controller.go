@@ -107,7 +107,6 @@ func (ac authController) Login(ctx *gin.Context) {
 				user.ID,
 				tokens,
 			)
-
 			return
 		}
 
@@ -168,11 +167,22 @@ func (ac authController) Refresh(ctx *gin.Context) {
 			return
 		}
 
-		ctx.JSON(
-			http.StatusOK,
-			gin.H{
-				"message": "Generated new tokens",
-			},
+		var userRoles []string
+		for _, role := range mapClaims["roles"].([]any) {
+			userRole, _ := role.(string)
+			userRoles = append(userRoles, userRole)
+		}
+
+		tokens := ac.AuthService.GenerateTokens(
+			ctx,
+			userID,
+			userRoles,
+		)
+
+		ac.AuthService.UpdateUserTokens(
+			ctx,
+			userID,
+			tokens,
 		)
 		return
 	}

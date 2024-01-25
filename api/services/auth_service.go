@@ -247,7 +247,7 @@ func (as AuthService) UpdateUserTokens(
 	ctx *gin.Context,
 	userID uuid.UUID,
 	tokens *models.Tokens,
-) error {
+) {
 	UpdateTokensParams := db.UpdateTokensParams{
 		UserID:       userID,
 		AccessToken:  tokens.AccessToken,
@@ -258,6 +258,7 @@ func (as AuthService) UpdateUserTokens(
 		ctx,
 		UpdateTokensParams,
 	)
-
-	return err
+	if err != nil {
+		panic(err)
+	}
 }
