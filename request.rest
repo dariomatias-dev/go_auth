@@ -19,6 +19,13 @@ Content-Type: application/json
     "password": "u6VI*j7i8,0H"
 }
 
+### Refresh
+GET {{apiurl}}/refresh
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY3ODc0NDEsImlkIjoiNDQxZmU5ZDMtMjU5Ni00MjQzLTgzNWItNmUyYjg2OTQ0MDU4Iiwicm9sZXMiOlsidXNlciJdLCJ0b2tlbl90eXBlIjoicmVmcmVzaF90b2tlbiJ9.P86ZylAxp5muMdcdRBOfC5gcCaEHegp-L67KBoyDKUA
+
+{}
+
 ### Validate Email
 POST {{apiurl}}/validate-email
 Content-Type: application/json
