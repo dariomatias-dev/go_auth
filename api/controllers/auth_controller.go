@@ -123,14 +123,22 @@ func (ac authController) Login(ctx *gin.Context) {
 }
 
 func (ac authController) Refresh(ctx *gin.Context) {
-	token, ok := ac.AuthService.GetToken(ctx)
+	tokenString, ok := ac.AuthService.GetToken(ctx)
+	if !ok {
+		return
+	}
+
+	payload, ok := ac.AuthService.GetPayload(
+		ctx,
+		*tokenString,
+	)
 	if !ok {
 		return
 	}
 
 	ctx.AbortWithStatusJSON(
 		http.StatusOK,
-		token,
+		payload,
 	)
 }
 

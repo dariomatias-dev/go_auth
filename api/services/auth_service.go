@@ -3,6 +3,7 @@ package services
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -92,6 +93,39 @@ func (as AuthService) GenerateTokens(
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}
+}
+
+func (as AuthService) GetPayload(
+	ctx *gin.Context,
+	tokenString string,
+) (*jwt.Token, bool) {
+	token, err := jwt.Parse(
+		tokenString,
+		func (token *jwt.Token) (any, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf(
+					"unexpected signing method: %v",
+					token.Header["alg"],
+				)
+			}
+
+			return []byte(
+				os.Getenv("JWT_SECRET_KEY"),
+			), nil
+		},
+	)
+
+	if err != nil {
+		ctx.AbortWithStatusJSON(
+			http.StatusBadRequest,
+			gin.H{
+				"message": "invalid token",
+			},
+		)
+		return nil, false
+	}
+
+	return token, true
 }
 
 func (as AuthService) ValidateEmail(
