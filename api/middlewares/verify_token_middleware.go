@@ -37,5 +37,7 @@ func VerifyToken(
 			)
 			return
 		}
+
+		ctx.Set("user", payload)
 	}
 }

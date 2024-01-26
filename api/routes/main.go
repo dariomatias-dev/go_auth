@@ -37,6 +37,7 @@ func AppRoutes(
 			authService,
 		)
 	}
+	identityVerifierMiddleware := middlewares.IdentityVerifierMiddleware
 
 	app := router.Group("")
 	{
@@ -57,6 +58,7 @@ func AppRoutes(
 				"/user/:id",
 				verifyTokenMiddleware,
 				validUUIDMiddleware,
+				identityVerifierMiddleware,
 				usersController.FindOne,
 			)
 			users.GET(
@@ -68,12 +70,14 @@ func AppRoutes(
 				"/user/:id",
 				verifyTokenMiddleware,
 				validUUIDMiddleware,
+				identityVerifierMiddleware,
 				usersController.Update,
 			)
 			users.DELETE(
 				"/user/:id",
 				verifyTokenMiddleware,
 				validUUIDMiddleware,
+				identityVerifierMiddleware,
 				usersController.Delete,
 			)
 		}
