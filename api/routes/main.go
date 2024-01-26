@@ -13,14 +13,15 @@ func AppRoutes(
 	router *gin.Engine,
 	dbQueries *db.Queries,
 ) *gin.RouterGroup {
+	authService := services.AuthService{
+		DbQueries: dbQueries,
+	}
 	usersService := services.UsersService{
 		DbQueries: dbQueries,
 	}
 
 	authController := controllers.NewAuthController(
-		services.AuthService{
-			DbQueries: dbQueries,
-		},
+		authService,
 		usersService,
 	)
 	usersController := controllers.NewUsersController(
@@ -30,6 +31,12 @@ func AppRoutes(
 	router.Use(middlewares.HandleError())
 
 	validUUIDMiddleware := middlewares.ValidUUIDMiddleware
+	verifyTokenMiddleware := func(ctx *gin.Context) {
+		middlewares.VerifyToken(
+			ctx,
+			authService,
+		)
+	}
 
 	app := router.Group("")
 	{
@@ -48,20 +55,24 @@ func AppRoutes(
 			)
 			users.GET(
 				"/user/:id",
+				verifyTokenMiddleware,
 				validUUIDMiddleware,
 				usersController.FindOne,
 			)
 			users.GET(
 				"/users",
+				verifyTokenMiddleware,
 				usersController.FindAll,
 			)
 			users.PATCH(
 				"/user/:id",
+				verifyTokenMiddleware,
 				validUUIDMiddleware,
 				usersController.Update,
 			)
 			users.DELETE(
 				"/user/:id",
+				verifyTokenMiddleware,
 				validUUIDMiddleware,
 				usersController.Delete,
 			)
