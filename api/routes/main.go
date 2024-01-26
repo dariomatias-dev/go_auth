@@ -5,6 +5,7 @@ import (
 
 	"github.com/dariomatias-dev/go_auth/api/controllers"
 	db "github.com/dariomatias-dev/go_auth/api/db/sqlc"
+	usertype "github.com/dariomatias-dev/go_auth/api/enums/user_type"
 	"github.com/dariomatias-dev/go_auth/api/middlewares"
 	"github.com/dariomatias-dev/go_auth/api/services"
 )
@@ -38,6 +39,7 @@ func AppRoutes(
 		)
 	}
 	identityVerifierMiddleware := middlewares.IdentityVerifierMiddleware
+	roleCheckMiddleware := middlewares.RoleCheckMiddleware
 
 	app := router.Group("")
 	{
@@ -64,6 +66,16 @@ func AppRoutes(
 			users.GET(
 				"/users",
 				verifyTokenMiddleware,
+				func(ctx *gin.Context) {
+					roles := []string{
+						usertype.Admin,
+					}
+
+					roleCheckMiddleware(
+						ctx,
+						roles,
+					)
+				},
 				usersController.FindAll,
 			)
 			users.PATCH(

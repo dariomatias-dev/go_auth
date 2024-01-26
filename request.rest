@@ -66,6 +66,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDYzNTQ1N
 ### Get Users
 GET {{apiurl}}/users
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDYzNTQ1NDUsImlkIjoiNDQxZmU5ZDMtMjU5Ni00MjQzLTgzNWItNmUyYjg2OTQ0MDU4Iiwicm9sZXMiOlsidXNlciJdLCJ0b2tlbl90eXBlIjoiYWNjZXNzX3Rva2VuIn0.qqzf9-AJLujMtkDp5tBJC_DXcdOeLonHzuxHPxXzpCQ
 
 {}
 
