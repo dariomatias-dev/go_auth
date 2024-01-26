@@ -4,23 +4,20 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 
 	usertype "github.com/dariomatias-dev/go_auth/api/enums/user_type"
+	"github.com/dariomatias-dev/go_auth/api/models"
 )
 
 func IdentityVerifierMiddleware(ctx *gin.Context) {
 	userID := ctx.Param("id")
 
-	payload, _ := ctx.Get("user")
+	user, _ := ctx.Get("user")
+	payload, _ := user.(models.PayloadModel)
 
-	mapClaims, _ := payload.(*jwt.Token).Claims.(jwt.MapClaims)
+	isAdmin := false
 
-	userRoles := mapClaims["roles"].([]interface{})
-
-	isAdmin := true
-
-	for _, userRole := range userRoles {
+	for _, userRole := range payload.Roles {
 		if userRole == usertype.Admin {
 			isAdmin = true
 			break
@@ -28,7 +25,7 @@ func IdentityVerifierMiddleware(ctx *gin.Context) {
 	}
 
 	if !isAdmin {
-		if userID != mapClaims["id"] {
+		if userID != payload.ID {
 			ctx.AbortWithStatusJSON(
 				http.StatusUnauthorized,
 				gin.H{

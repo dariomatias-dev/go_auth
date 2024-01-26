@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 
 	tokentype "github.com/dariomatias-dev/go_auth/api/enums/token_type"
 	"github.com/dariomatias-dev/go_auth/api/services"
@@ -27,17 +26,15 @@ func VerifyToken(
 		return
 	}
 
-	if mapClaims, ok := payload.Claims.(jwt.MapClaims); ok || payload.Valid {
-		if mapClaims["token_type"] != tokentype.AccessToken {
-			ctx.AbortWithStatusJSON(
-				http.StatusUnauthorized,
-				gin.H{
-					"message": "invalid token",
-				},
-			)
-			return
-		}
-
-		ctx.Set("user", payload)
+	if payload.TokenType != tokentype.AccessToken {
+		ctx.AbortWithStatusJSON(
+			http.StatusUnauthorized,
+			gin.H{
+				"message": "invalid token",
+			},
+		)
+		return
 	}
+
+	ctx.Set("user", *payload)
 }

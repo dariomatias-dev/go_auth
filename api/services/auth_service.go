@@ -98,7 +98,7 @@ func (as AuthService) GenerateTokens(
 func (as AuthService) GetPayload(
 	ctx *gin.Context,
 	tokenString string,
-) (*jwt.Token, bool) {
+) (*models.PayloadModel, bool) {
 	token, err := jwt.Parse(
 		tokenString,
 		func(token *jwt.Token) (any, error) {
@@ -126,7 +126,29 @@ func (as AuthService) GetPayload(
 		return nil, false
 	}
 
-	return token, true
+	if mapClaims, ok := token.Claims.(jwt.MapClaims); ok || token.Valid {
+		var roles []string
+		userRoles := mapClaims["roles"].([]interface{})
+
+		for _, userRole := range userRoles {
+			roles = append(roles, userRole.(string))
+		}
+
+		return &models.PayloadModel{
+			Exp:       mapClaims["exp"].(float64),
+			ID:        mapClaims["id"].(string),
+			Roles:     roles,
+			TokenType: mapClaims["token_type"].(string),
+		}, true
+	}
+
+	ctx.AbortWithStatusJSON(
+		http.StatusBadRequest,
+		gin.H{
+			"message": "invalid token",
+		},
+	)
+	return nil, false
 }
 
 func (as AuthService) ValidateEmail(

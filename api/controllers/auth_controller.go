@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 
@@ -138,60 +137,44 @@ func (ac authController) Refresh(ctx *gin.Context) {
 		return
 	}
 
-	if mapClaims, ok := payload.Claims.(jwt.MapClaims); ok || payload.Valid {
-		if mapClaims["token_type"] != tokentype.RefreshToken {
-			ctx.AbortWithStatusJSON(
-				http.StatusUnauthorized,
-				gin.H{
-					"message": "invalid token",
-					"error":   "token is not refresh type",
-				},
-			)
-			return
-		}
-
-		userID, _ := uuid.Parse(mapClaims["id"].(string))
-
-		userTokens := ac.AuthService.GetUserTokens(
-			ctx,
-			userID,
-		)
-
-		if userTokens.RefreshToken != *tokenString {
-			ctx.AbortWithStatusJSON(
-				http.StatusUnauthorized,
-				gin.H{
-					"message": "invalid token",
-				},
-			)
-			return
-		}
-
-		var userRoles []string
-		for _, role := range mapClaims["roles"].([]any) {
-			userRole, _ := role.(string)
-			userRoles = append(userRoles, userRole)
-		}
-
-		tokens := ac.AuthService.GenerateTokens(
-			ctx,
-			userID,
-			userRoles,
-		)
-
-		ac.AuthService.UpdateUserTokens(
-			ctx,
-			userID,
-			tokens,
+	if payload.TokenType != tokentype.RefreshToken {
+		ctx.AbortWithStatusJSON(
+			http.StatusUnauthorized,
+			gin.H{
+				"message": "invalid token",
+				"error":   "token is not refresh type",
+			},
 		)
 		return
 	}
 
-	ctx.AbortWithStatusJSON(
-		http.StatusUnauthorized,
-		gin.H{
-			"message": "invalid token",
-		},
+	userID, _ := uuid.Parse(payload.ID)
+
+	userTokens := ac.AuthService.GetUserTokens(
+		ctx,
+		userID,
+	)
+
+	if userTokens.RefreshToken != *tokenString {
+		ctx.AbortWithStatusJSON(
+			http.StatusUnauthorized,
+			gin.H{
+				"message": "invalid token",
+			},
+		)
+		return
+	}
+
+	tokens := ac.AuthService.GenerateTokens(
+		ctx,
+		userID,
+		payload.Roles,
+	)
+
+	ac.AuthService.UpdateUserTokens(
+		ctx,
+		userID,
+		tokens,
 	)
 }
 

@@ -4,7 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
+
+	"github.com/dariomatias-dev/go_auth/api/models"
 )
 
 func RoleCheckMiddleware(
@@ -12,12 +13,11 @@ func RoleCheckMiddleware(
 	roles []string,
 ) {
 	payload, _ := ctx.Get("user")
-	mapClaims, _ := payload.(*jwt.Token).Claims.(jwt.MapClaims)
-	userRoles := mapClaims["roles"].([]interface{})
+	user := payload.(models.PayloadModel)
 
 	canAccessRoute := true
 
-	for _, userRole := range userRoles {
+	for _, userRole := range user.Roles {
 		for _, role := range roles {
 			if userRole == role {
 				canAccessRoute = true
