@@ -23,5 +23,8 @@ SET
 WHERE
     user_id = $1;
 
+-- name: ResetLoginAttempts :exec
+UPDATE "login_attempts" SET attempts = 0 WHERE user_id = $1;
+
 -- name: DeleteLoginAttempt :exec
 DELETE FROM "login_attempts" WHERE user_id = $1;

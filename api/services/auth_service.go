@@ -221,6 +221,16 @@ func (as AuthService) IncrementLoginAttemptCounter(
 	}
 }
 
+func (ac AuthService) ResetLoginAttempts(
+	ctx *gin.Context,
+	userID uuid.UUID,
+) {
+	err := ac.DbQueries.ResetLoginAttempts(ctx, userID)
+	if err != nil {
+		panic(err)
+	}
+}
+
 func generateToken(
 	userID uuid.UUID,
 	userRoles []string,

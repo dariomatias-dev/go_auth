@@ -37,7 +37,7 @@ func (ac authController) Login(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(
 			http.StatusOK,
 			gin.H{
-				"message": "Invalid body",
+				"message": "invalid body.",
 				"error":   err,
 			},
 		)
@@ -54,7 +54,7 @@ func (ac authController) Login(ctx *gin.Context) {
 			ctx.JSON(
 				http.StatusOK,
 				gin.H{
-					"message": "Email not verified",
+					"message": "Email not verified.",
 				},
 			)
 			return
@@ -69,24 +69,28 @@ func (ac authController) Login(ctx *gin.Context) {
 				currentTime,
 			).Hours()
 
-			_, value := math.Modf(hoursLeft)
-			if value != 0 {
-				hoursLeft++
+			if hoursLeft > 0 {
+				_, value := math.Modf(hoursLeft)
+				if value != 0 {
+					hoursLeft++
+				}
+
+				timeLeft := int(hoursLeft)
+				errorMessage := fmt.Sprintf(
+					"Your account has been temporarily blocked due to multiple unsuccessful login attempts. Please wait for %d hours before trying again. If issues persist, contact support.",
+					timeLeft,
+				)
+
+				ctx.JSON(
+					http.StatusOK,
+					gin.H{
+						"message": errorMessage,
+					},
+				)
+				return
 			}
 
-			timeLeft := int(hoursLeft)
-			errorMessage := fmt.Sprintf(
-				"Your account has been temporarily blocked due to multiple unsuccessful login attempts. Please wait for %d hours before trying again. If issues persist, contact support.",
-				timeLeft,
-			)
-
-			ctx.JSON(
-				http.StatusOK,
-				gin.H{
-					"message": errorMessage,
-				},
-			)
-			return
+			ac.AuthService.ResetLoginAttempts(ctx, user.ID)
 		}
 
 		validPassword := bcrypt.CompareHashAndPassword(
@@ -118,7 +122,7 @@ func (ac authController) Login(ctx *gin.Context) {
 	ctx.JSON(
 		http.StatusOK,
 		gin.H{
-			"message": "Invalid email or password",
+			"message": "invalid email or password.",
 		},
 	)
 }

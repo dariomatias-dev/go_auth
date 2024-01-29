@@ -7,7 +7,7 @@ Content-Type: application/json
 
 {
     "email": "adelta893@gmail.com",
-    "password": "Auj@76vj7-b76B"
+    "password": "Auj@76vj7-b76"
 }
 
 ### Login 2

@@ -102,3 +102,12 @@ func (q *Queries) IncrementLoginAttemptCounter(ctx context.Context, userID uuid.
 	_, err := q.db.ExecContext(ctx, incrementLoginAttemptCounter, userID)
 	return err
 }
+
+const resetLoginAttempts = `-- name: ResetLoginAttempts :exec
+UPDATE "login_attempts" SET attempts = 0 WHERE user_id = $1
+`
+
+func (q *Queries) ResetLoginAttempts(ctx context.Context, userID uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, resetLoginAttempts, userID)
+	return err
+}
