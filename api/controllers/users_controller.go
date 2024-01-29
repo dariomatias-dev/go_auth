@@ -25,7 +25,11 @@ func NewUsersController(
 	}
 }
 
-func (uc usersController) Create(ctx *gin.Context) {
+func (uc usersController) CreateAdmin(ctx *gin.Context) {
+
+}
+
+func (uc usersController) CreateUser(ctx *gin.Context) {
 	createUserBody := models.CreateUserModel{}
 
 	if err := ctx.ShouldBindJSON(&createUserBody); err != nil {

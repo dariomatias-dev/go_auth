@@ -40,6 +40,16 @@ func AppRoutes(
 	}
 	identityVerifierMiddleware := middlewares.IdentityVerifierMiddleware
 	roleCheckMiddleware := middlewares.RoleCheckMiddleware
+	adminCheckMiddleware := func(ctx *gin.Context) {
+		roles := []string{
+			usertype.Admin,
+		}
+
+		roleCheckMiddleware(
+			ctx,
+			roles,
+		)
+	}
 
 	app := router.Group("")
 	{
@@ -54,7 +64,12 @@ func AppRoutes(
 		{
 			users.POST(
 				"/user",
-				usersController.Create,
+				adminCheckMiddleware,
+				usersController.CreateAdmin,
+			)
+			users.POST(
+				"/user",
+				usersController.CreateUser,
 			)
 			users.GET(
 				"/user/:id",
@@ -66,16 +81,7 @@ func AppRoutes(
 			users.GET(
 				"/users",
 				verifyTokenMiddleware,
-				func(ctx *gin.Context) {
-					roles := []string{
-						usertype.Admin,
-					}
-
-					roleCheckMiddleware(
-						ctx,
-						roles,
-					)
-				},
+				adminCheckMiddleware,
 				usersController.FindAll,
 			)
 			users.PATCH(
