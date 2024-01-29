@@ -1,7 +1,13 @@
 package routes
 
 import (
+	"context"
+	"database/sql"
+	"log"
+	"os"
+
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/dariomatias-dev/go_auth/api/controllers"
 	db "github.com/dariomatias-dev/go_auth/api/db/sqlc"
@@ -63,7 +69,7 @@ func AppRoutes(
 		users := app.Group("")
 		{
 			users.POST(
-				"/user",
+				"/user-admin",
 				adminCheckMiddleware,
 				func(ctx *gin.Context) {
 					usersController.Create(
@@ -113,6 +119,42 @@ func AppRoutes(
 				usersController.Delete,
 			)
 		}
+	}
+
+	ctx := context.Background()
+
+	adminEmail := os.Getenv("ADMIN_EMAIL")
+
+	_, err := dbQueries.GetUserByEmail(
+		ctx,
+		adminEmail,
+	)
+
+	if err == sql.ErrNoRows {
+		encryptedPassword, err := bcrypt.GenerateFromPassword(
+			[]byte(os.Getenv("ADMIN_PASSWORD")),
+			10,
+		)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		createUserParams := db.CreateUserParams{
+			Name:     "Administrator",
+			Age:      18,
+			Email:    adminEmail,
+			Password: string(encryptedPassword),
+			Roles: []string{
+				usertype.Admin,
+			},
+		}
+
+		dbQueries.CreateUser(
+			ctx,
+			createUserParams,
+		)
+	} else if err != nil {
+		panic(err)
 	}
 
 	return app
