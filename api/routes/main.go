@@ -65,11 +65,25 @@ func AppRoutes(
 			users.POST(
 				"/user",
 				adminCheckMiddleware,
-				usersController.CreateAdmin,
+				func(ctx *gin.Context) {
+					usersController.Create(
+						ctx,
+						[]string{
+							usertype.Admin,
+						},
+					)
+				},
 			)
 			users.POST(
 				"/user",
-				usersController.CreateUser,
+				func(ctx *gin.Context) {
+					usersController.Create(
+						ctx,
+						[]string{
+							usertype.User,
+						},
+					)
+				},
 			)
 			users.GET(
 				"/user/:id",

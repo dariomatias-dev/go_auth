@@ -13,7 +13,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	db "github.com/dariomatias-dev/go_auth/api/db/sqlc"
-	usertype "github.com/dariomatias-dev/go_auth/api/enums/user_type"
 	"github.com/dariomatias-dev/go_auth/api/models"
 	"github.com/dariomatias-dev/go_auth/api/utils"
 )
@@ -30,6 +29,7 @@ type UsersService struct {
 func (us UsersService) Create(
 	ctx *gin.Context,
 	createUserBody models.CreateUserModel,
+	userRoles []string,
 ) *uuid.UUID {
 	encryptedPassword, err := bcrypt.GenerateFromPassword(
 		[]byte(createUserBody.Password),
@@ -49,9 +49,7 @@ func (us UsersService) Create(
 		Age:      createUserBody.Age,
 		Email:    createUserBody.Email,
 		Password: string(encryptedPassword),
-		Roles: []string{
-			usertype.User,
-		},
+		Roles: userRoles,
 	}
 
 	userID, err := us.DbQueries.CreateUser(ctx, createUserParams)

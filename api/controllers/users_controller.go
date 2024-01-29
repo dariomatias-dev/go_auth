@@ -25,11 +25,10 @@ func NewUsersController(
 	}
 }
 
-func (uc usersController) CreateAdmin(ctx *gin.Context) {
-
-}
-
-func (uc usersController) CreateUser(ctx *gin.Context) {
+func (uc usersController) Create(
+	ctx *gin.Context,
+	userRoles []string,
+) {
 	createUserBody := models.CreateUserModel{}
 
 	if err := ctx.ShouldBindJSON(&createUserBody); err != nil {
@@ -43,7 +42,11 @@ func (uc usersController) CreateUser(ctx *gin.Context) {
 		return
 	}
 
-	userID := uc.UsersServices.Create(ctx, createUserBody)
+	userID := uc.UsersServices.Create(
+		ctx,
+		createUserBody,
+		userRoles,
+	)
 
 	verificationCode := ""
 	for loop := 0; loop < 6; loop++ {
