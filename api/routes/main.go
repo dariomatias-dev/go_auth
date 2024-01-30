@@ -20,6 +20,8 @@ func AppRoutes(
 	router *gin.Engine,
 	dbQueries *db.Queries,
 ) *gin.RouterGroup {
+	initializeAdminUser(dbQueries)
+
 	authService := services.AuthService{
 		DbQueries: dbQueries,
 	}
@@ -70,6 +72,7 @@ func AppRoutes(
 		{
 			users.POST(
 				"/user-admin",
+				verifyTokenMiddleware,
 				adminCheckMiddleware,
 				func(ctx *gin.Context) {
 					usersController.Create(
@@ -121,6 +124,12 @@ func AppRoutes(
 		}
 	}
 
+	return app
+}
+
+func initializeAdminUser(
+	dbQueries *db.Queries,
+) {
 	ctx := context.Background()
 
 	adminEmail := os.Getenv("ADMIN_EMAIL")
@@ -156,6 +165,4 @@ func AppRoutes(
 	} else if err != nil {
 		panic(err)
 	}
-
-	return app
 }
