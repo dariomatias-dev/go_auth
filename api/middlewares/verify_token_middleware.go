@@ -13,14 +13,14 @@ func VerifyToken(
 	ctx *gin.Context,
 	authService services.AuthService,
 ) {
-	token, ok := authService.GetToken(ctx)
+	tokenString, ok := authService.GetToken(ctx)
 	if !ok {
 		return
 	}
 
 	payload, ok := authService.GetPayload(
 		ctx,
-		*token,
+		tokenString,
 	)
 	if !ok {
 		return

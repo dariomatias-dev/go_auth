@@ -135,7 +135,7 @@ func (ac authController) Refresh(ctx *gin.Context) {
 
 	payload, ok := ac.AuthService.GetPayload(
 		ctx,
-		*tokenString,
+		tokenString,
 	)
 	if !ok {
 		return
@@ -159,7 +159,7 @@ func (ac authController) Refresh(ctx *gin.Context) {
 		userID,
 	)
 
-	if userTokens.RefreshToken != *tokenString {
+	if userTokens.RefreshToken != tokenString {
 		ctx.AbortWithStatusJSON(
 			http.StatusUnauthorized,
 			gin.H{

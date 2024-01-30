@@ -28,8 +28,8 @@ func (as AuthService) Refresh() {}
 
 func (as AuthService) GetToken(
 	ctx *gin.Context,
-) (*string, bool) {
-	token, err := GetAuthorizationToken(ctx)
+) (string, bool) {
+	tokenString, err := GetAuthorizationToken(ctx)
 	if err != nil {
 		ctx.AbortWithStatusJSON(
 			http.StatusBadRequest,
@@ -37,30 +37,30 @@ func (as AuthService) GetToken(
 				"message": err.Error(),
 			},
 		)
-		return nil, false
+		return "", false
 	}
 
-	return token, true
+	return tokenString, true
 }
 
 func GetAuthorizationToken(
 	ctx *gin.Context,
-) (*string, error) {
+) (string, error) {
 	authorization := ctx.GetHeader("Authorization")
 
 	if index := strings.Index(authorization, " "); index == -1 {
-		return nil, errors.New("invalid token")
+		return "", errors.New("invalid token")
 	}
 
 	authorizationToken := strings.Split(authorization, " ")
 	typeToken := authorizationToken[0]
-	token := authorizationToken[1]
+	tokenString := authorizationToken[1]
 
 	if typeToken != "Bearer" {
-		return nil, errors.New("invalid token")
+		return "", errors.New("invalid token")
 	}
 
-	return &token, nil
+	return tokenString, nil
 }
 
 func (as AuthService) GenerateTokens(

@@ -3,7 +3,7 @@ package models
 import "github.com/google/uuid"
 
 type EmailValidationModel struct {
-	UserID uuid.UUID
+	UserID           uuid.UUID
 	VerificationCode string
-	ExpirationTime int64
+	ExpirationTime   int64
 }
