@@ -40,6 +40,10 @@ func init() {
 	}
 
 	dbQueries = db.New(dbcon)
+
+	initialize.InitializeAdminUser(
+		dbQueries,
+	)
 }
 
 func main() {
