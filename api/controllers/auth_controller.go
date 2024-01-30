@@ -10,7 +10,6 @@ import (
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 
-	tokentype "github.com/dariomatias-dev/go_auth/api/enums/token_type"
 	"github.com/dariomatias-dev/go_auth/api/models"
 	"github.com/dariomatias-dev/go_auth/api/services"
 )
@@ -128,27 +127,10 @@ func (ac authController) Login(ctx *gin.Context) {
 }
 
 func (ac authController) Refresh(ctx *gin.Context) {
-	tokenString, ok := ac.AuthService.GetToken(ctx)
-	if !ok {
-		return
-	}
-
-	payload, ok := ac.AuthService.GetPayload(
+	payload, tokenString, ok := ac.AuthService.ValidateToken(
 		ctx,
-		tokenString,
 	)
 	if !ok {
-		return
-	}
-
-	if payload.TokenType != tokentype.RefreshToken {
-		ctx.AbortWithStatusJSON(
-			http.StatusUnauthorized,
-			gin.H{
-				"message": "invalid token",
-				"error":   "token is not refresh type",
-			},
-		)
 		return
 	}
 

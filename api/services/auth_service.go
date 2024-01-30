@@ -95,6 +95,67 @@ func (as AuthService) GenerateTokens(
 	}
 }
 
+func generateToken(
+	userID uuid.UUID,
+	userRoles []string,
+	tokenType string,
+	daysToExpire int,
+) string {
+	payload := jwt.MapClaims{
+		"id":         userID,
+		"roles":      userRoles,
+		"token_type": tokenType,
+		"exp": time.Now().Add(
+			time.Hour * 24 * time.Duration(daysToExpire),
+		).Unix(),
+	}
+
+	token := jwt.NewWithClaims(
+		jwt.SigningMethodHS256,
+		payload,
+	)
+
+	tokenString, err := token.SignedString(
+		[]byte(
+			os.Getenv("JWT_SECRET_KEY"),
+		),
+	)
+	if err != nil {
+		return ""
+	}
+
+	return tokenString
+}
+
+func (as AuthService) ValidateToken(
+	ctx *gin.Context,
+) (*models.PayloadModel, string, bool) {
+	tokenString, ok := as.GetToken(ctx)
+	if !ok {
+		return nil, "", false
+	}
+
+	payload, ok := as.GetPayload(
+		ctx,
+		tokenString,
+	)
+	if !ok {
+		return nil, "", false
+	}
+
+	if payload.TokenType != tokentype.AccessToken {
+		ctx.AbortWithStatusJSON(
+			http.StatusUnauthorized,
+			gin.H{
+				"message": "invalid token",
+			},
+		)
+		return nil, "", false
+	}
+
+	return payload, tokenString, true
+}
+
 func (as AuthService) GetPayload(
 	ctx *gin.Context,
 	tokenString string,
@@ -229,38 +290,6 @@ func (ac AuthService) ResetLoginAttempts(
 	if err != nil {
 		panic(err)
 	}
-}
-
-func generateToken(
-	userID uuid.UUID,
-	userRoles []string,
-	tokenType string,
-	daysToExpire int,
-) string {
-	payload := jwt.MapClaims{
-		"id":         userID,
-		"roles":      userRoles,
-		"token_type": tokenType,
-		"exp": time.Now().Add(
-			time.Hour * 24 * time.Duration(daysToExpire),
-		).Unix(),
-	}
-
-	token := jwt.NewWithClaims(
-		jwt.SigningMethodHS256,
-		payload,
-	)
-
-	tokenString, err := token.SignedString(
-		[]byte(
-			os.Getenv("JWT_SECRET_KEY"),
-		),
-	)
-	if err != nil {
-		return ""
-	}
-
-	return tokenString
 }
 
 func (as AuthService) GetUserTokens(
