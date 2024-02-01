@@ -34,19 +34,39 @@ func InitializeAdminUser(
 		}
 
 		createUserParams := db.CreateUserParams{
-			Name:     "Administrator",
-			Age:      18,
-			Email:    adminEmail,
-			Password: string(encryptedPassword),
+			Name:       "Administrator",
+			Age:        18,
+			Email:      adminEmail,
+			ValidEmail: true,
+			Password:   string(encryptedPassword),
 			Roles: []string{
 				usertype.Admin,
 			},
 		}
 
-		dbQueries.CreateUser(
+		userID, err := dbQueries.CreateUser(
 			ctx,
 			createUserParams,
 		)
+		if err != nil {
+			panic(err)
+		}
+
+		err = dbQueries.CreateTokens(
+			ctx,
+			userID,
+		)
+		if err != nil {
+			panic(err)
+		}
+
+		err = dbQueries.CreateLoginAttempts(
+			ctx,
+			userID,
+		)
+		if err != nil {
+			panic(err)
+		}
 	} else if err != nil {
 		panic(err)
 	}

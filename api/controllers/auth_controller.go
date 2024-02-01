@@ -49,7 +49,7 @@ func (ac authController) Login(ctx *gin.Context) {
 	)
 
 	if user != nil {
-		if !user.ValidEmail.Bool {
+		if !user.ValidEmail {
 			ctx.JSON(
 				http.StatusOK,
 				gin.H{

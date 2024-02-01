@@ -17,17 +17,18 @@ import (
 const createUser = `-- name: CreateUser :one
 INSERT INTO
     "users" (
-        name, age, email, password, roles
+        name, age, email, valid_email, password, roles
     )
-VALUES ($1, $2, $3, $4, $5) RETURNING id
+VALUES ($1, $2, $3, $4, $5, $6) RETURNING id
 `
 
 type CreateUserParams struct {
-	Name     string   `json:"name"`
-	Age      int32    `json:"age"`
-	Email    string   `json:"email"`
-	Password string   `json:"password"`
-	Roles    []string `json:"roles"`
+	Name       string   `json:"name"`
+	Age        int32    `json:"age"`
+	Email      string   `json:"email"`
+	ValidEmail bool     `json:"valid_email"`
+	Password   string   `json:"password"`
+	Roles      []string `json:"roles"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (uuid.UUID, error) {
@@ -35,6 +36,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (uuid.UU
 		arg.Name,
 		arg.Age,
 		arg.Email,
+		arg.ValidEmail,
 		arg.Password,
 		pq.Array(arg.Roles),
 	)
@@ -100,6 +102,7 @@ SELECT
     name,
     age,
     email,
+    valid_email,
     roles,
     created_at,
     updated_at
@@ -107,13 +110,14 @@ FROM "users"
 `
 
 type GetUsersRow struct {
-	ID        uuid.UUID `json:"id"`
-	Name      string    `json:"name"`
-	Age       int32     `json:"age"`
-	Email     string    `json:"email"`
-	Roles     []string  `json:"roles"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID         uuid.UUID `json:"id"`
+	Name       string    `json:"name"`
+	Age        int32     `json:"age"`
+	Email      string    `json:"email"`
+	ValidEmail bool      `json:"valid_email"`
+	Roles      []string  `json:"roles"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
 }
 
 func (q *Queries) GetUsers(ctx context.Context) ([]GetUsersRow, error) {
@@ -130,6 +134,7 @@ func (q *Queries) GetUsers(ctx context.Context) ([]GetUsersRow, error) {
 			&i.Name,
 			&i.Age,
 			&i.Email,
+			&i.ValidEmail,
 			pq.Array(&i.Roles),
 			&i.CreatedAt,
 			&i.UpdatedAt,

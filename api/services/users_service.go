@@ -45,11 +45,12 @@ func (us UsersService) Create(
 
 	// Create User Table
 	createUserParams := db.CreateUserParams{
-		Name:     createUserBody.Name,
-		Age:      createUserBody.Age,
-		Email:    createUserBody.Email,
-		Password: string(encryptedPassword),
-		Roles: userRoles,
+		Name:       createUserBody.Name,
+		Age:        createUserBody.Age,
+		Email:      createUserBody.Email,
+		ValidEmail: false,
+		Password:   string(encryptedPassword),
+		Roles:      userRoles,
 	}
 
 	userID, err := us.DbQueries.CreateUser(ctx, createUserParams)
