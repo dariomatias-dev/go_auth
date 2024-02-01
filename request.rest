@@ -22,7 +22,7 @@ Content-Type: application/json
 ### Refresh
 GET {{apiurl}}/refresh
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY4MDA1NzEsImlkIjoiNDQxZmU5ZDMtMjU5Ni00MjQzLTgzNWItNmUyYjg2OTQ0MDU4Iiwicm9sZXMiOlsidXNlciJdLCJ0b2tlbl90eXBlIjoicmVmcmVzaF90b2tlbiJ9.EDttINcBYxYInQYfcbHSrGR10M_M4E3Yv1fOjLXw9jY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY4ODAzODgsImlkIjoiN2IyZmVlZWQtMjVlYy00YTNhLWJkNjktZTNmOTdiOGY4YzgzIiwicm9sZXMiOlsidXNlciJdLCJ0b2tlbl90eXBlIjoiYWNjZXNzX3Rva2VuIn0.xBX_gH6z2AWmyieO9zeQ_kRLghQ9iDfvAMMnRNHTuqE
 
 {}
 
@@ -31,10 +31,10 @@ POST {{apiurl}}/validate-email
 Content-Type: application/json
 
 {
-    "verification_code": "894510"
+    "verification_code": "659141"
 }
 
-### Create User 1
+### Create User
 POST {{apiurl}}/user
 Content-Type: application/json
 
@@ -45,34 +45,24 @@ Content-Type: application/json
     "password": "Auj@76vj7-b76B"
 }
 
-### Create User 2
-POST {{apiurl}}/user
-Content-Type: application/json
-
-{
-    "name": "Marcio Tavares",
-    "age": 18,
-    "email": "marciotavares@gmail.com",
-    "password": "u6VI*j7i8,0H"
-}
-
 ### Get User
-GET {{apiurl}}/user/441fe9d3-2596-4243-835b-6e2b86944058
+GET {{apiurl}}/user/7b2feeed-25ec-4a3a-bd69-e3f97b8f8c83
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDYzNTQ1NDUsImlkIjoiNDQxZmU5ZDMtMjU5Ni00MjQzLTgzNWItNmUyYjg2OTQ0MDU4Iiwicm9sZXMiOlsidXNlciJdLCJ0b2tlbl90eXBlIjoiYWNjZXNzX3Rva2VuIn0.qqzf9-AJLujMtkDp5tBJC_DXcdOeLonHzuxHPxXzpCQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY4ODEzNzgsImlkIjoiN2IyZmVlZWQtMjVlYy00YTNhLWJkNjktZTNmOTdiOGY4YzgzIiwicm9sZXMiOlsidXNlciJdLCJ0b2tlbl90eXBlIjoiYWNjZXNzX3Rva2VuIn0.gmEUQ0ar-jr1VF0m0adnA-9mrqBUYHlxbfM7m9aeXhI
 
 {}
 
 ### Get Users
 GET {{apiurl}}/users
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY4NzU5ODUsImlkIjoiZjM4N2I0YzYtMWMxNi00ZmE2LWE1MGYtM2E2ZTJjODI1YWM1Iiwicm9sZXMiOlsiYWRtaW4iXSwidG9rZW5fdHlwZSI6ImFjY2Vzc190b2tlbiJ9.qN00vQa3fstd93BfD0UwPDCoCF-PJd_Jd8DWRkgRazM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY4Nzk1MDgsImlkIjoiZjM4N2I0YzYtMWMxNi00ZmE2LWE1MGYtM2E2ZTJjODI1YWM1Iiwicm9sZXMiOlsiYWRtaW4iXSwidG9rZW5fdHlwZSI6ImFjY2Vzc190b2tlbiJ9.Zldhz53AHBaeiRMPXuiOGaMyZK1QQdC0RWl6Kph-dgM
 
 {}
 
 ### Update User
 PATCH {{apiurl}}/user/52dcbdac-e0f5-41d6-999c-d0cf8a0d80cb
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY4Nzk3NTIsImlkIjoiZjM4N2I0YzYtMWMxNi00ZmE2LWE1MGYtM2E2ZTJjODI1YWM1Iiwicm9sZXMiOlsiYWRtaW4iXSwidG9rZW5fdHlwZSI6ImFjY2Vzc190b2tlbiJ9.0cYFqmqoz7TXZtwXCKKw1lHCd4ZE5l9Bf6DIWH4XUIA
 
 {
     "age": 20
@@ -81,5 +71,6 @@ Content-Type: application/json
 ### Delete User
 DELETE {{apiurl}}/user/7017e65a-c0db-4f3c-83d2-fabad1128f8f
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY4Nzk3NTIsImlkIjoiZjM4N2I0YzYtMWMxNi00ZmE2LWE1MGYtM2E2ZTJjODI1YWM1Iiwicm9sZXMiOlsiYWRtaW4iXSwidG9rZW5fdHlwZSI6ImFjY2Vzc190b2tlbiJ9.0cYFqmqoz7TXZtwXCKKw1lHCd4ZE5l9Bf6DIWH4XUIA
 
 {}

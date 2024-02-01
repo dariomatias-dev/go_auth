@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 
+	tokentype "github.com/dariomatias-dev/go_auth/api/enums/token_type"
 	"github.com/dariomatias-dev/go_auth/api/models"
 	"github.com/dariomatias-dev/go_auth/api/services"
 )
@@ -129,6 +130,7 @@ func (ac authController) Login(ctx *gin.Context) {
 func (ac authController) Refresh(ctx *gin.Context) {
 	payload, tokenString, ok := ac.AuthService.ValidateToken(
 		ctx,
+		tokentype.RefreshToken,
 	)
 	if !ok {
 		return

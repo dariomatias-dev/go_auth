@@ -15,7 +15,7 @@ func RoleCheckMiddleware(
 	payload, _ := ctx.Get("user")
 	user := payload.(models.PayloadModel)
 
-	canAccessRoute := true
+	canAccessRoute := false
 
 	for _, userRole := range user.Roles {
 		for _, role := range roles {
@@ -27,7 +27,7 @@ func RoleCheckMiddleware(
 
 	if !canAccessRoute {
 		ctx.AbortWithStatusJSON(
-			http.StatusOK,
+			http.StatusUnauthorized,
 			gin.H{
 				"message": "you do not have the necessary permissions to access this route",
 			},

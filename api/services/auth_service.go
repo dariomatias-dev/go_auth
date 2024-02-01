@@ -22,10 +22,6 @@ type AuthService struct {
 	DbQueries *db.Queries
 }
 
-func (as AuthService) Login() {}
-
-func (as AuthService) Refresh() {}
-
 func (as AuthService) GetToken(
 	ctx *gin.Context,
 ) (string, bool) {
@@ -35,6 +31,7 @@ func (as AuthService) GetToken(
 			http.StatusBadRequest,
 			gin.H{
 				"message": err.Error(),
+				"error":   "token required",
 			},
 		)
 		return "", false
@@ -129,6 +126,7 @@ func generateToken(
 
 func (as AuthService) ValidateToken(
 	ctx *gin.Context,
+	tokenType string,
 ) (*models.PayloadModel, string, bool) {
 	tokenString, ok := as.GetToken(ctx)
 	if !ok {
@@ -150,7 +148,9 @@ func (as AuthService) ValidateToken(
 		userID,
 	)
 
-	if userTokens.AccessToken != tokenString || payload.TokenType != tokentype.AccessToken {
+	if tokenType != payload.TokenType ||
+		(payload.TokenType == tokentype.AccessToken && userTokens.AccessToken != tokenString) ||
+		(payload.TokenType == tokentype.RefreshToken && userTokens.RefreshToken != tokenString) {
 		ctx.AbortWithStatusJSON(
 			http.StatusUnauthorized,
 			gin.H{
