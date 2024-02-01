@@ -143,7 +143,14 @@ func (as AuthService) ValidateToken(
 		return nil, "", false
 	}
 
-	if payload.TokenType != tokentype.AccessToken {
+	userID, _ := uuid.Parse(payload.ID)
+
+	userTokens := as.GetUserTokens(
+		ctx,
+		userID,
+	)
+
+	if userTokens.AccessToken != tokenString || payload.TokenType != tokentype.AccessToken {
 		ctx.AbortWithStatusJSON(
 			http.StatusUnauthorized,
 			gin.H{
@@ -182,7 +189,7 @@ func (as AuthService) GetPayload(
 				http.StatusUnauthorized,
 				gin.H{
 					"message": "invalid token",
-					"error": "expired token",
+					"error":   "expired token",
 				},
 			)
 			return nil, false
