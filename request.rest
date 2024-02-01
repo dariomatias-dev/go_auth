@@ -1,22 +1,22 @@
 ### Variables
 @apiurl = http://localhost:3001
 
-### Login 1
+### Admin login
+POST {{apiurl}}/login
+Content-Type: application/json
+
+{
+    "email": "matiasdario75@gmail.com",
+    "password": "Vj-MVuj&*mti&k"
+}
+
+### User Login
 POST {{apiurl}}/login
 Content-Type: application/json
 
 {
     "email": "adelta893@gmail.com",
-    "password": "Auj@76vj7-b76"
-}
-
-### Login 2
-POST {{apiurl}}/login
-Content-Type: application/json
-
-{
-    "email": "marciotavares@gmail.com",
-    "password": "u6VI*j7i8,0H"
+    "password": "Auj@76vj7-b76B"
 }
 
 ### Refresh

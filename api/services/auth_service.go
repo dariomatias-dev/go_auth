@@ -177,8 +177,19 @@ func (as AuthService) GetPayload(
 	)
 
 	if err != nil {
+		if !token.Valid {
+			ctx.AbortWithStatusJSON(
+				http.StatusUnauthorized,
+				gin.H{
+					"message": "invalid token",
+					"error": "expired token",
+				},
+			)
+			return nil, false
+		}
+
 		ctx.AbortWithStatusJSON(
-			http.StatusBadRequest,
+			http.StatusUnauthorized,
 			gin.H{
 				"message": "invalid token",
 				"error":   err.Error(),
@@ -187,7 +198,7 @@ func (as AuthService) GetPayload(
 		return nil, false
 	}
 
-	if mapClaims, ok := token.Claims.(jwt.MapClaims); ok || token.Valid {
+	if mapClaims, ok := token.Claims.(jwt.MapClaims); ok {
 		var roles []string
 		userRoles := mapClaims["roles"].([]interface{})
 
@@ -204,7 +215,7 @@ func (as AuthService) GetPayload(
 	}
 
 	ctx.AbortWithStatusJSON(
-		http.StatusBadRequest,
+		http.StatusUnauthorized,
 		gin.H{
 			"message": "invalid token",
 		},

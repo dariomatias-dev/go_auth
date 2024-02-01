@@ -81,7 +81,7 @@ func (ac authController) Login(ctx *gin.Context) {
 				)
 
 				ctx.JSON(
-					http.StatusOK,
+					http.StatusUnauthorized,
 					gin.H{
 						"message": errorMessage,
 					},
