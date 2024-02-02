@@ -147,6 +147,9 @@ func (as AuthService) ValidateToken(
 		ctx,
 		userID,
 	)
+	if userTokens == nil {
+		return nil, "", false
+	}
 
 	if tokenType != payload.TokenType ||
 		(payload.TokenType == tokentype.AccessToken && userTokens.AccessToken != tokenString) ||
@@ -161,6 +164,27 @@ func (as AuthService) ValidateToken(
 	}
 
 	return payload, tokenString, true
+}
+
+func (as AuthService) GetUserTokens(
+	ctx *gin.Context,
+	userID uuid.UUID,
+) *db.Tokens {
+	userTokens, err := as.DbQueries.GetTokens(ctx, userID)
+
+	if err == sql.ErrNoRows {
+		ctx.AbortWithStatusJSON(
+			http.StatusNotFound,
+			gin.H{
+				"message": "token user not found",
+			},
+		)
+		return nil
+	} else if err != nil {
+		panic(err)
+	}
+
+	return &userTokens
 }
 
 func (as AuthService) GetPayload(
@@ -308,18 +332,6 @@ func (ac AuthService) ResetLoginAttempts(
 	if err != nil {
 		panic(err)
 	}
-}
-
-func (as AuthService) GetUserTokens(
-	ctx *gin.Context,
-	userID uuid.UUID,
-) db.Tokens {
-	userTokens, err := as.DbQueries.GetTokens(ctx, userID)
-	if err != nil {
-		panic(err)
-	}
-
-	return userTokens
 }
 
 func (as AuthService) UpdateUserTokens(

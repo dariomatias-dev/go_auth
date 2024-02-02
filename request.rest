@@ -31,7 +31,7 @@ POST {{apiurl}}/validate-email
 Content-Type: application/json
 
 {
-    "verification_code": "659141"
+    "verification_code": "251044"
 }
 
 ### Create User
@@ -55,7 +55,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY4ODEzN
 ### Get Users
 GET {{apiurl}}/users
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY4Nzk1MDgsImlkIjoiZjM4N2I0YzYtMWMxNi00ZmE2LWE1MGYtM2E2ZTJjODI1YWM1Iiwicm9sZXMiOlsiYWRtaW4iXSwidG9rZW5fdHlwZSI6ImFjY2Vzc190b2tlbiJ9.Zldhz53AHBaeiRMPXuiOGaMyZK1QQdC0RWl6Kph-dgM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY5NjI5ODUsImlkIjoiZTAxMzEwZWYtMTNmNy00N2VhLThkMDAtNTQ4YzIyODg5ZDE0Iiwicm9sZXMiOlsiYWRtaW4iXSwidG9rZW5fdHlwZSI6ImFjY2Vzc190b2tlbiJ9.V4Tp1acqwqC39kf9Y2M1leo8MLfHda6Wkwkt_oYI8V8
 
 {}
 
@@ -69,8 +69,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY4Nzk3N
 }
 
 ### Delete User
-DELETE {{apiurl}}/user/7017e65a-c0db-4f3c-83d2-fabad1128f8f
+DELETE {{apiurl}}/user/f387b4c6-1c16-4fa6-a50f-3a6e2c825ac5
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY4Nzk3NTIsImlkIjoiZjM4N2I0YzYtMWMxNi00ZmE2LWE1MGYtM2E2ZTJjODI1YWM1Iiwicm9sZXMiOlsiYWRtaW4iXSwidG9rZW5fdHlwZSI6ImFjY2Vzc190b2tlbiJ9.0cYFqmqoz7TXZtwXCKKw1lHCd4ZE5l9Bf6DIWH4XUIA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY5NTc0ODcsImlkIjoiZjM4N2I0YzYtMWMxNi00ZmE2LWE1MGYtM2E2ZTJjODI1YWM1Iiwicm9sZXMiOlsiYWRtaW4iXSwidG9rZW5fdHlwZSI6ImFjY2Vzc190b2tlbiJ9.nknFsBmVngD8EJM8df2AjAslM5mQEzxQdvnM2ZeR8Dw
 
 {}
