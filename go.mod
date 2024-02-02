@@ -1,6 +1,6 @@
 module github.com/dariomatias-dev/go_auth
 
-go 1.21.4
+go 1.21.6
 
 require (
 	github.com/bytedance/sonic v1.9.1 // indirect

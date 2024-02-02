@@ -16,13 +16,13 @@ Content-Type: application/json
 
 {
     "email": "adelta893@gmail.com",
-    "password": "Auj@76vj7-b76B"
+    "password": "Auj@76vj7-b76"
 }
 
 ### Refresh
 GET {{apiurl}}/refresh
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY4ODAzODgsImlkIjoiN2IyZmVlZWQtMjVlYy00YTNhLWJkNjktZTNmOTdiOGY4YzgzIiwicm9sZXMiOlsidXNlciJdLCJ0b2tlbl90eXBlIjoiYWNjZXNzX3Rva2VuIn0.xBX_gH6z2AWmyieO9zeQ_kRLghQ9iDfvAMMnRNHTuqE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDc0ODIwMjgsImlkIjoiYzRkMTc1ODMtYmQxMy00YjExLWIyMTQtMjZlYzFhMzMxNzdlIiwicm9sZXMiOlsidXNlciJdLCJ0b2tlbl90eXBlIjoicmVmcmVzaF90b2tlbiJ9.r8b71Q4yWCrWsx85fIHe9NvTE_Ci1HDFIkz53ZlxPYA
 
 {}
 
@@ -46,9 +46,9 @@ Content-Type: application/json
 }
 
 ### Get User
-GET {{apiurl}}/user/7b2feeed-25ec-4a3a-bd69-e3f97b8f8c83
+GET {{apiurl}}/user/c4d17583-bd13-4b11-b214-26ec1a33177e
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY4ODEzNzgsImlkIjoiN2IyZmVlZWQtMjVlYy00YTNhLWJkNjktZTNmOTdiOGY4YzgzIiwicm9sZXMiOlsidXNlciJdLCJ0b2tlbl90eXBlIjoiYWNjZXNzX3Rva2VuIn0.gmEUQ0ar-jr1VF0m0adnA-9mrqBUYHlxbfM7m9aeXhI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY5NjM1MzAsImlkIjoiYzRkMTc1ODMtYmQxMy00YjExLWIyMTQtMjZlYzFhMzMxNzdlIiwicm9sZXMiOlsidXNlciJdLCJ0b2tlbl90eXBlIjoiYWNjZXNzX3Rva2VuIn0.ZGAh9GZbAl6cJhwre0uzy5r2I622oXQakChoiaQ-q6g
 
 {}
 
