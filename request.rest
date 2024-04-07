@@ -16,13 +16,13 @@ Content-Type: application/json
 
 {
     "email": "adelta893@gmail.com",
-    "password": "Auj@76vj7-b76"
+    "password": "Auj@76vj7-b76B"
 }
 
 ### Refresh
 GET {{apiurl}}/refresh
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDc0ODIwMjgsImlkIjoiYzRkMTc1ODMtYmQxMy00YjExLWIyMTQtMjZlYzFhMzMxNzdlIiwicm9sZXMiOlsidXNlciJdLCJ0b2tlbl90eXBlIjoicmVmcmVzaF90b2tlbiJ9.r8b71Q4yWCrWsx85fIHe9NvTE_Ci1HDFIkz53ZlxPYA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTA5Mzk3NzEsImlkIjoiMjczMDQ5NTYtNmIxMS00YWRjLTlkOGItNWZkNGRkODZjNjkyIiwicm9sZXMiOlsidXNlciJdLCJ0b2tlbl90eXBlIjoicmVmcmVzaF90b2tlbiJ9.ahAQp2rRDEFAbBUFxSea8W3zSJfyb49KF1Om6zfxBzI
 
 {}
 
@@ -31,7 +31,7 @@ POST {{apiurl}}/validate-email
 Content-Type: application/json
 
 {
-    "verification_code": "251044"
+    "verification_code": "669484"
 }
 
 ### Create User
@@ -46,16 +46,16 @@ Content-Type: application/json
 }
 
 ### Get User
-GET {{apiurl}}/user/c4d17583-bd13-4b11-b214-26ec1a33177e
+GET {{apiurl}}/user/27304956-6b11-4adc-9d8b-5fd4dd86c692
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY5NjM1MzAsImlkIjoiYzRkMTc1ODMtYmQxMy00YjExLWIyMTQtMjZlYzFhMzMxNzdlIiwicm9sZXMiOlsidXNlciJdLCJ0b2tlbl90eXBlIjoiYWNjZXNzX3Rva2VuIn0.ZGAh9GZbAl6cJhwre0uzy5r2I622oXQakChoiaQ-q6g
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTA0MjEwNjksImlkIjoiMjczMDQ5NTYtNmIxMS00YWRjLTlkOGItNWZkNGRkODZjNjkyIiwicm9sZXMiOlsidXNlciJdLCJ0b2tlbl90eXBlIjoiYWNjZXNzX3Rva2VuIn0.691mFSq3ul3jgnCDDuxRYlMfTjsTQlXxuv7-c9t5MwM
 
 {}
 
 ### Get Users
 GET {{apiurl}}/users
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDY5NjI5ODUsImlkIjoiZTAxMzEwZWYtMTNmNy00N2VhLThkMDAtNTQ4YzIyODg5ZDE0Iiwicm9sZXMiOlsiYWRtaW4iXSwidG9rZW5fdHlwZSI6ImFjY2Vzc190b2tlbiJ9.V4Tp1acqwqC39kf9Y2M1leo8MLfHda6Wkwkt_oYI8V8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTA0MjEwNjksImlkIjoiMjczMDQ5NTYtNmIxMS00YWRjLTlkOGItNWZkNGRkODZjNjkyIiwicm9sZXMiOlsidXNlciJdLCJ0b2tlbl90eXBlIjoiYWNjZXNzX3Rva2VuIn0.691mFSq3ul3jgnCDDuxRYlMfTjsTQlXxuv7-c9t5MwM
 
 {}
 
